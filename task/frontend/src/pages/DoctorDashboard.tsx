@@ -13,7 +13,7 @@ const DoctorDashboard = () => {
   const fetchAppointments = useCallback(async () => {
     try {
       const { appointments } = await doctorService.getAppointments(filter);
-      setAppointments(appointments);
+      setAppointments(appointments ?? []);
     } catch (error) {
       toast.error('Failed to load appointments');
     } finally {

@@ -18,6 +18,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-005 | High | Backend | TypeScript | Null/incorrectly typed populated appointment in doctorController | Backend fails to compile and crashes on startup | N/A | Added null/type guards before accessing populated patient/doctor fields | task/backend/src/controllers/doctorController.ts | Fixed | 2026-01-30 |
 | HF-006 | High | Backend | TypeScript | Possible null patient/doctor in appointmentController | Backend fails to compile and crashes on startup | N/A | Added null checks before emailing and return 404 if missing | task/backend/src/controllers/appointmentController.ts | Fixed | 2026-01-30 |
 | HF-007 | High | Frontend | Bug | TDZ error calling fetchAppointments before initialization in DoctorDashboard | Doctor dashboard crashes on render | N/A | Wrapped fetchAppointments in useCallback and moved effect dependency to avoid TDZ | task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
+| HF-008 | High | Frontend | Bug | doctorService.getAppointments returned array instead of object | Doctor dashboard crashed on `appointments.map` | N/A | Return response data object and default to empty array | task/frontend/src/services/doctorService.ts; task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
 
 Suggested values:
 
@@ -83,6 +84,21 @@ Suggested values:
 - Fix implemented: Wrapped `fetchAppointments` in `useCallback` and used it as the effect dependency after definition.
 - Files changed: `task/frontend/src/pages/DoctorDashboard.tsx`
 - Testing evidence: Page renders without the ReferenceError.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-008
+
+- Severity: High
+- Area: Frontend
+- Type: Bug
+- What was wrong: `doctorService.getAppointments` returned an array but callers expected an object with `appointments`, causing `appointments` to be undefined.
+- Impact: Doctor dashboard crashed on render (`Cannot read properties of undefined (reading 'map')`).
+- Workaround (if any): None.
+- Fix implemented: Return the response data object and default to an empty array when setting state.
+- Files changed: `task/frontend/src/services/doctorService.ts`, `task/frontend/src/pages/DoctorDashboard.tsx`
+- Testing evidence: Doctor dashboard renders and lists appointments without the `map` error.
 - Date resolved: 2026-01-30
 
 ## Notes and Workarounds (Global)

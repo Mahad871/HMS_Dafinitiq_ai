@@ -29,7 +29,7 @@ export const doctorService = {
 
   getAppointments: async (status?: string): Promise<{ appointments: Appointment[] }> => {
     const response = await api.get('/doctors/appointments/list', { params: { status } });
-    return response.data.appointments;
+    return response.data;
   },
 
   updateAppointmentStatus: async (id: string, status: string, notes?: string) => {
