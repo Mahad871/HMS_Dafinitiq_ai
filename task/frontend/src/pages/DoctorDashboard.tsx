@@ -42,6 +42,12 @@ const DoctorDashboard = () => {
     }
   };
 
+  const handleFilterChange = (nextFilter: string) => {
+    if (nextFilter === filter) return;
+    setLoading(true);
+    setFilter(nextFilter);
+  };
+
   const getStatusColor = (status: AppointmentStatus) => {
     switch (status) {
       case AppointmentStatus.CONFIRMED:
@@ -64,19 +70,19 @@ const DoctorDashboard = () => {
 
         <div className="mb-6 flex space-x-2">
           <button
-            onClick={() => setFilter('')}
+            onClick={() => handleFilterChange('')}
             className={`px-4 py-2 rounded-lg ${!filter ? 'bg-primary-600 text-white' : 'bg-white text-gray-700'}`}
           >
             All
           </button>
           <button
-            onClick={() => setFilter(AppointmentStatus.PENDING)}
+            onClick={() => handleFilterChange(AppointmentStatus.PENDING)}
             className={`px-4 py-2 rounded-lg ${filter === AppointmentStatus.PENDING ? 'bg-primary-600 text-white' : 'bg-white text-gray-700'}`}
           >
             Pending
           </button>
           <button
-            onClick={() => setFilter(AppointmentStatus.CONFIRMED)}
+            onClick={() => handleFilterChange(AppointmentStatus.CONFIRMED)}
             className={`px-4 py-2 rounded-lg ${filter === AppointmentStatus.CONFIRMED ? 'bg-primary-600 text-white' : 'bg-white text-gray-700'}`}
           >
             Confirmed

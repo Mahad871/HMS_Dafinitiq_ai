@@ -31,6 +31,8 @@ This template follows the assessment requirements from the project PDF.
 | HF-015 | Medium | Frontend | Bug | Doctor dashboard status changes not reflected without refresh | Users see stale appointment statuses | N/A | Update appointment status in local state after API success | task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
 | HF-016 | Medium | Frontend | Bug | Analytics charts not rendering reliably | Analytics cards/charts show blank or incorrect data | N/A | Fix effect deps and add safe defaults for analytics datasets | task/frontend/src/pages/Analytics.tsx | Fixed | 2026-01-30 |
 | HF-017 | Low | Frontend | UI/UX | Pie chart labels overlap in analytics | Chart labels are unreadable | N/A | Replace inline labels with legend | task/frontend/src/pages/Analytics.tsx | Fixed | 2026-01-30 |
+| HF-018 | Medium | Frontend | UX | Doctor dashboard tabs have no loading feedback | Users unsure if filter change is working | N/A | Trigger loading when switching filters | task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
+| HF-019 | Medium | Frontend | UX | Notifications panel cannot be closed easily | Dropdown stays open and blocks UI | N/A | Add close button and click-outside handler | task/frontend/src/components/NotificationBell.tsx | Fixed | 2026-01-30 |
 
 Suggested values:
 
@@ -246,6 +248,36 @@ Suggested values:
 - Fix implemented: Added a corner legend with hover highlighting and dimming of non-active slices.
 - Files changed: `task/frontend/src/pages/Analytics.tsx`
 - Testing evidence: Pie chart labels no longer overlap.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-018
+
+- Severity: Medium
+- Area: Frontend
+- Type: UX
+- What was wrong: Switching tabs on Doctor Dashboard didn't show loading state.
+- Impact: Users had no feedback while filtered appointments were loading.
+- Workaround (if any): Wait or refresh.
+- Fix implemented: Set loading state immediately when filter changes.
+- Files changed: `task/frontend/src/pages/DoctorDashboard.tsx`
+- Testing evidence: Spinner appears briefly when switching filters.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-019
+
+- Severity: Medium
+- Area: Frontend
+- Type: UX
+- What was wrong: Notification dropdown lacked a close button and did not close on outside click.
+- Impact: Dropdown could obstruct UI.
+- Workaround (if any): Reload page.
+- Fix implemented: Added close button and click-outside handler.
+- Files changed: `task/frontend/src/components/NotificationBell.tsx`
+- Testing evidence: Dropdown closes via close button or outside click.
 - Date resolved: 2026-01-30
 
 ## Notes and Workarounds (Global)

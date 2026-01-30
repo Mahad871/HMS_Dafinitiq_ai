@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Bell, X, Check } from 'lucide-react';
 import api from '../services/api';
 import { format } from 'date-fns';
@@ -18,12 +18,29 @@ const NotificationBell = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!dropdownRef.current) return;
+      if (dropdownRef.current.contains(event.target as Node)) return;
+      setShowDropdown(false);
+    };
+
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
 
   const fetchNotifications = async () => {
     try {
@@ -64,7 +81,7 @@ const NotificationBell = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setShowDropdown(!showDropdown)}
         className="relative p-2 text-gray-700 hover:text-primary-600"
@@ -81,14 +98,23 @@ const NotificationBell = () => {
         <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto">
           <div className="p-4 border-b flex justify-between items-center">
             <h3 className="font-semibold text-gray-900">Notifications</h3>
-            {unreadCount > 0 && (
+            <div className="flex items-center space-x-2">
+              {unreadCount > 0 && (
+                <button
+                  onClick={markAllAsRead}
+                  className="text-sm text-primary-600 hover:text-primary-700"
+                >
+                  Mark all as read
+                </button>
+              )}
               <button
-                onClick={markAllAsRead}
-                className="text-sm text-primary-600 hover:text-primary-700"
+                onClick={() => setShowDropdown(false)}
+                className="text-gray-500 hover:text-gray-700"
+                title="Close"
               >
-                Mark all as read
+                <X className="h-4 w-4" />
               </button>
-            )}
+            </div>
           </div>
 
           {notifications.length === 0 ? (
