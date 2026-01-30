@@ -14,17 +14,7 @@ const AIHealthAssistant = () => {
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const getHealthTips = async () => {
-    setLoading(true);
-    try {
-      const { data } = await api.get(`/ai/health-tips?category=${category}`);
-      setResponse(data.tips);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to get tips');
-    } finally {
-      setLoading(false);
-    }
-  };
+  
 
   const getHealthAdvice = async () => {
     if (!symptoms.trim()) {
@@ -62,6 +52,9 @@ const AIHealthAssistant = () => {
       setLoading(false);
     }
   };
+
+
+ 
 
   const getHealthTips = async () => {
     setLoading(true);

@@ -17,6 +17,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-001 |  |  |  |  |  |  |  |  | Open |  |
 | HF-002 |  |  |  |  |  |  |  |  | Open |  |
 | HF-003 |  |  |  |  |  |  |  |  | Open |  |
+| HF-004 | Medium | Frontend | TypeScript | Duplicate identifier `getHealthTips` in AIHealthAssistant | Build fails in Vite React Babel | N/A | Renamed/removed duplicate declaration to resolve build error | task/frontend/src/pages/AIHealthAssistant.tsx | Fixed | 2026-01-30 |
 
 Suggested values:
 
@@ -68,6 +69,21 @@ Suggested values:
 - Files changed:
 - Testing evidence:
 - Date resolved:
+
+---
+
+### Issue HF-004
+
+- Severity: Medium
+- Area: Frontend
+- Type: TypeScript
+- What was wrong: `getHealthTips` was declared more than once in `AIHealthAssistant.tsx`, causing a build-time identifier redeclaration error.
+- Impact: Frontend build failed with `[plugin:vite:react-babel] Identifier 'getHealthTips' has already been declared`.
+- Workaround (if any): None.
+- Fix implemented: Removed or renamed the duplicate `getHealthTips` declaration to ensure a single definition.
+- Files changed: `task/frontend/src/pages/AIHealthAssistant.tsx`
+- Testing evidence: Vite dev server builds without the duplicate identifier error.
+- Date resolved: 2026-01-30
 
 ## Notes and Workarounds (Global)
 
