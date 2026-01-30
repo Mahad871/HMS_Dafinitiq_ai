@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { UserRole } from '../types';
+import { AppointmentStatus, UserRole } from '../types';
 import {
   TrendingUp,
   Calendar,
@@ -20,11 +20,9 @@ const Analytics = () => {
   const [analytics, setAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchAnalytics();
-  });
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
+    if (!user) return;
+    setLoading(true);
     try {
       let endpoint = '/analytics/patient';
       if (user?.role === UserRole.DOCTOR) {
@@ -40,9 +38,78 @@ const Analytics = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
   const COLORS = ['#0ea5e9', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
+
+  const safeAnalytics = useMemo(() => {
+    return {
+      totalAppointments: analytics?.totalAppointments ?? 0,
+      completedAppointments: analytics?.completedAppointments ?? 0,
+      avgRating: analytics?.avgRating ?? '0.0',
+      estimatedRevenue: analytics?.estimatedRevenue ?? 0,
+      doctorsVisited: analytics?.doctorsVisited ?? 0,
+      totalSpent: analytics?.totalSpent ?? 0,
+      appointmentsByStatus: analytics?.appointmentsByStatus ?? [],
+      monthlyAppointments: analytics?.monthlyAppointments ?? [],
+    };
+  }, [analytics]);
+
+  const statusOrder = [
+    AppointmentStatus.PENDING,
+    AppointmentStatus.CONFIRMED,
+    AppointmentStatus.CANCELLED,
+    AppointmentStatus.COMPLETED,
+  ];
+
+  const appointmentsByStatus = useMemo(() => {
+    const raw = safeAnalytics.appointmentsByStatus;
+    const fallbackAppointments = analytics?.appointments || analytics?.recentAppointments || [];
+
+    const computeFromAppointments = (items: any[]) => {
+      const counts = new Map<string, number>();
+      items.forEach((apt: any) => {
+        const key = String(apt?.status ?? '');
+        if (!key) return;
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+      });
+      return statusOrder.map((status) => ({
+        _id: status,
+        count: counts.get(status) ?? 0,
+      }));
+    };
+
+    if ((!raw || (Array.isArray(raw) && raw.length === 0)) && fallbackAppointments.length > 0) {
+      return computeFromAppointments(fallbackAppointments);
+    }
+
+    const normalized = Array.isArray(raw)
+      ? raw
+      : Object.entries(raw || {}).map(([key, value]) => ({ _id: key, count: value }));
+
+    const counts = new Map<string, number>();
+    normalized.forEach((entry: any) => {
+      const key = String(entry?._id ?? '');
+      const count = Number(entry?.count ?? 0);
+      counts.set(key, count);
+    });
+
+    return statusOrder.map((status) => ({
+      _id: status,
+      count: counts.get(status) ?? 0,
+    }));
+  }, [safeAnalytics.appointmentsByStatus, analytics?.appointments, analytics?.recentAppointments]);
+
+  const hasStatusData = appointmentsByStatus.some((entry) => entry.count > 0);
+
+  const monthlyAppointments = safeAnalytics.monthlyAppointments.map((item: any) => ({
+    ...item,
+    monthLabel: item?._id?.month ? `${item._id.month}/${item._id.year}` : 'Unknown',
+  }));
 
   if (loading) {
     return (
@@ -77,7 +144,7 @@ const Analytics = () => {
                   <Calendar className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">{analytics.totalAppointments}</p>
+                <p className="text-3xl font-bold">{safeAnalytics.totalAppointments}</p>
                 <p className="text-blue-100">Total Appointments</p>
               </motion.div>
 
@@ -91,7 +158,7 @@ const Analytics = () => {
                   <Activity className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">{analytics.completedAppointments}</p>
+                <p className="text-3xl font-bold">{safeAnalytics.completedAppointments}</p>
                 <p className="text-purple-100">Completed</p>
               </motion.div>
 
@@ -105,7 +172,7 @@ const Analytics = () => {
                   <Star className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">{analytics.avgRating}</p>
+                <p className="text-3xl font-bold">{safeAnalytics.avgRating}</p>
                 <p className="text-green-100">Average Rating</p>
               </motion.div>
 
@@ -119,7 +186,7 @@ const Analytics = () => {
                   <DollarSign className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">${analytics.estimatedRevenue}</p>
+                <p className="text-3xl font-bold">${safeAnalytics.estimatedRevenue}</p>
                 <p className="text-yellow-100">Estimated Revenue</p>
               </motion.div>
             </>
@@ -136,7 +203,7 @@ const Analytics = () => {
                   <Calendar className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">{analytics.totalAppointments}</p>
+                <p className="text-3xl font-bold">{safeAnalytics.totalAppointments}</p>
                 <p className="text-blue-100">Total Appointments</p>
               </motion.div>
 
@@ -150,7 +217,7 @@ const Analytics = () => {
                   <Users className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">{analytics.doctorsVisited}</p>
+                <p className="text-3xl font-bold">{safeAnalytics.doctorsVisited}</p>
                 <p className="text-purple-100">Doctors Visited</p>
               </motion.div>
 
@@ -164,7 +231,7 @@ const Analytics = () => {
                   <Activity className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">{analytics.completedAppointments}</p>
+                <p className="text-3xl font-bold">{safeAnalytics.completedAppointments}</p>
                 <p className="text-green-100">Completed</p>
               </motion.div>
 
@@ -178,7 +245,7 @@ const Analytics = () => {
                   <DollarSign className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">${analytics.totalSpent}</p>
+                <p className="text-3xl font-bold">${safeAnalytics.totalSpent}</p>
                 <p className="text-yellow-100">Total Spent</p>
               </motion.div>
             </>
@@ -197,29 +264,35 @@ const Analytics = () => {
               <BarChart3 className="h-5 w-5 mr-2 text-primary-600" />
               Appointments by Status
             </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={analytics.appointmentsByStatus}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={(entry) => `${entry._id}: ${entry.count}`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="count"
-                >
-                  {analytics.appointmentsByStatus.map((entry: any, index: number) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            {hasStatusData ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={appointmentsByStatus}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={(entry) => `${String(entry._id ?? 'Unknown')}: ${entry.count}`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="count"
+                  >
+                    {appointmentsByStatus.map((entry: any, index: number) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-gray-500">
+                No status data yet
+              </div>
+            )}
           </motion.div>
 
           {/* Monthly Trend */}
-          {user?.role === UserRole.DOCTOR && analytics.monthlyAppointments && (
+          {user?.role === UserRole.DOCTOR && monthlyAppointments.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -231,9 +304,9 @@ const Analytics = () => {
                 Monthly Appointments
               </h3>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={analytics.monthlyAppointments}>
+                <BarChart data={monthlyAppointments}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="_id.month" />
+                  <XAxis dataKey="monthLabel" />
                   <YAxis />
                   <Tooltip />
                   <Bar dataKey="count" fill="#0ea5e9" />

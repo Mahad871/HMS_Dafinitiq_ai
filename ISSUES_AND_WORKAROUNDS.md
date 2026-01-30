@@ -1,3 +1,6 @@
+
+
+
 # Issues and Workarounds Tracker
 
 Use this document to record issues found and solutions implemented while bringing the platform to a fully working state.
@@ -26,6 +29,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-013 | High | Frontend | Performance | Doctor list API called on every render | Rate limit triggered on backend | N/A | Memoize fetch and add effect dependencies | task/frontend/src/pages/Home.tsx | Fixed | 2026-01-30 |
 | HF-014 | Low | Frontend | UI/UX | Doctor signup inputs lacked suggestions and currency picker | Harder data entry during doctor signup | N/A | Added datalist suggestions and searchable currency input | task/frontend/src/pages/Register.tsx | Fixed | 2026-01-30 |
 | HF-015 | Medium | Frontend | Bug | Doctor dashboard status changes not reflected without refresh | Users see stale appointment statuses | N/A | Update appointment status in local state after API success | task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
+| HF-016 | Medium | Frontend | Bug | Analytics charts not rendering reliably | Analytics cards/charts show blank or incorrect data | N/A | Fix effect deps and add safe defaults for analytics datasets | task/frontend/src/pages/Analytics.tsx | Fixed | 2026-01-30 |
 
 Suggested values:
 
@@ -211,6 +215,21 @@ Suggested values:
 - Fix implemented: Optimistically update the appointment status in local state after a successful API call.
 - Files changed: `task/frontend/src/pages/DoctorDashboard.tsx`
 - Testing evidence: Status badge updates immediately after clicking Confirm/Complete.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-016
+
+- Severity: Medium
+- Area: Frontend
+- Type: Bug
+- What was wrong: Analytics fetch ran on every render and charts assumed data always existed, leading to blank/incorrect renders.
+- Impact: Analytics cards/charts did not display properly.
+- Workaround (if any): Refresh page.
+- Fix implemented: Added effect dependencies, safe defaults, normalized status data, and fallback counts from appointments when needed.
+- Files changed: `task/frontend/src/pages/Analytics.tsx`
+- Testing evidence: Charts render consistently once data loads.
 - Date resolved: 2026-01-30
 
 ## Notes and Workarounds (Global)
