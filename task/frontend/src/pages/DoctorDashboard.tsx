@@ -29,6 +29,11 @@ const DoctorDashboard = () => {
     setLoading(true);
     try {
       await doctorService.updateAppointmentStatus(id, status);
+      setAppointments((prev) =>
+        prev.map((appointment) =>
+          appointment._id === id ? { ...appointment, status } : appointment
+        )
+      );
       toast.success('Appointment updated');
       setLoading(false);
     } catch (error) {

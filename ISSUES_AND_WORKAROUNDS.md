@@ -25,6 +25,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-012 | High | Frontend | Bug | Doctor users not visible because no doctor profile created | Patients see empty doctor list | N/A | Collect doctor profile fields on signup and create profile after register | task/frontend/src/pages/Register.tsx | Fixed | 2026-01-30 |
 | HF-013 | High | Frontend | Performance | Doctor list API called on every render | Rate limit triggered on backend | N/A | Memoize fetch and add effect dependencies | task/frontend/src/pages/Home.tsx | Fixed | 2026-01-30 |
 | HF-014 | Low | Frontend | UI/UX | Doctor signup inputs lacked suggestions and currency picker | Harder data entry during doctor signup | N/A | Added datalist suggestions and searchable currency input | task/frontend/src/pages/Register.tsx | Fixed | 2026-01-30 |
+| HF-015 | Medium | Frontend | Bug | Doctor dashboard status changes not reflected without refresh | Users see stale appointment statuses | N/A | Update appointment status in local state after API success | task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
 
 Suggested values:
 
@@ -195,6 +196,21 @@ Suggested values:
 - Fix implemented: Added datalist suggestions for specialization/qualification and a searchable currency input next to fee.
 - Files changed: `task/frontend/src/pages/Register.tsx`
 - Testing evidence: Signup shows suggestion dropdowns and currency picker for doctors.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-015
+
+- Severity: Medium
+- Area: Frontend
+- Type: Bug
+- What was wrong: After status updates, the UI did not update the appointment list until a page refresh.
+- Impact: Doctors saw stale statuses after confirming/completing appointments.
+- Workaround (if any): Refresh the page.
+- Fix implemented: Optimistically update the appointment status in local state after a successful API call.
+- Files changed: `task/frontend/src/pages/DoctorDashboard.tsx`
+- Testing evidence: Status badge updates immediately after clicking Confirm/Complete.
 - Date resolved: 2026-01-30
 
 ## Notes and Workarounds (Global)
