@@ -18,7 +18,6 @@ This template follows the assessment requirements from the project PDF.
 | HF-001 | Medium | Frontend | Bug | Analytics link visible to patients in Navbar | Patients could access analytics page incorrectly | N/A | Changed Navbar so only doctors see analytics link | task/frontend/src/components/Navbar.tsx | Fixed | 2026-01-30 |
 | HF-002 | High | Backend | Security | Chat actions lack participant checks | Any authed user can mark/read or send messages in other chats | N/A | Enforce participant checks for chat actions | task/backend/src/controllers/chatController.ts | Fixed | 2026-01-30 |
 | HF-003 | Medium | Backend | Security | Chat creation does not verify appointment relationship | Patients can create chats with any doctor | N/A | Require a valid appointment between patient and doctor | task/backend/src/controllers/chatController.ts | Fixed | 2026-01-30 |
-
 | HF-004 | Medium | Frontend | TypeScript | Duplicate identifier `getHealthTips` in AIHealthAssistant | Build fails in Vite React Babel | N/A | Renamed/removed duplicate declaration to resolve build error | task/frontend/src/pages/AIHealthAssistant.tsx | Fixed | 2026-01-30 |
 | HF-005 | High | Backend | TypeScript | Null/incorrectly typed populated appointment in doctorController | Backend fails to compile and crashes on startup | N/A | Added null/type guards before accessing populated patient/doctor fields | task/backend/src/controllers/doctorController.ts | Fixed | 2026-01-30 |
 | HF-006 | High | Backend | TypeScript | Possible null patient/doctor in appointmentController | Backend fails to compile and crashes on startup | N/A | Added null checks before emailing and return 404 if missing | task/backend/src/controllers/appointmentController.ts | Fixed | 2026-01-30 |
@@ -36,6 +35,9 @@ This template follows the assessment requirements from the project PDF.
 | HF-018 | Medium | Frontend | UX | Doctor dashboard tabs have no loading feedback | Users unsure if filter change is working | N/A | Trigger loading when switching filters | task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
 | HF-019 | Medium | Frontend | UX | Notifications panel cannot be closed easily | Dropdown stays open and blocks UI | N/A | Add close button and click-outside handler | task/frontend/src/components/NotificationBell.tsx | Fixed | 2026-01-30 |
 | HF-031 | Medium | Frontend | UI/UX | Navbar not responsive on mobile | Navigation links not accessible on small screens | N/A | Add mobile menu toggle and collapsible links | task/frontend/src/components/Navbar.tsx | Fixed | 2026-01-30 |
+| HF-032 | Low | Frontend | UI/UX | AI Assistant tabs overflow on mobile | Tabs and content wrap poorly on small screens | N/A | Make tabs grid-based and adjust spacing/text sizes | task/frontend/src/pages/AIHealthAssistant.tsx | Fixed | 2026-01-30 |
+| HF-033 | Low | Docs | Formatting | Issues table formatting broken by blank lines | Table renders incorrectly in Markdown | N/A | Remove blank lines within table block | ISSUES_AND_WORKAROUNDS.md | Fixed | 2026-01-30 |
+| HF-034 | Low | Frontend | UI/UX | Notifications dropdown overflows on mobile | Panel goes off-screen and is hard to use | N/A | Make dropdown width responsive and center on small screens | task/frontend/src/components/NotificationBell.tsx | Fixed | 2026-01-30 |
 | HF-020 | Critical | Backend | Security | Role escalation allowed on registration | Users can register as admin | N/A | Restrict registration roles to patient/doctor | task/backend/src/controllers/authController.ts | Fixed | 2026-01-30 |
 | HF-021 | High | Backend | Security | CORS allows any origin with credentials | Cross-origin abuse risk | N/A | Restrict CORS to allowed origins list | task/backend/src/server.ts | Fixed | 2026-01-30 |
 | HF-022 | Medium | Backend | Config | Global rate limiter throttles auth and core APIs | Users get 429s during normal use | N/A | Split auth and general API rate limits | task/backend/src/server.ts | Fixed | 2026-01-30 |
@@ -47,7 +49,6 @@ This template follows the assessment requirements from the project PDF.
 | HF-028 | Medium | Backend | Validation | Appointment status update accepts any string | Invalid statuses can be stored | N/A | Validate status against AppointmentStatus enum | task/backend/src/controllers/doctorController.ts | Fixed | 2026-01-30 |
 | HF-029 | Medium | Backend | Bug/Performance | Patient analytics totalSpent uses N+1 queries and may undercount | Incorrect totals and slow analytics | N/A | Aggregate totalSpent with lookup; avoid N+1 | task/backend/src/controllers/analyticsController.ts | Fixed | 2026-01-30 |
 | HF-030 | Low | Backend | Performance | Artificial delay in appointment creation | Unnecessary latency in booking flow | N/A | Remove artificial delay | task/backend/src/controllers/appointmentController.ts | Fixed | 2026-01-30 |
-
 Suggested values:
 
 - **Area**: Backend, Frontend, API, Auth, DB, AI, DevOps
@@ -397,6 +398,51 @@ Suggested values:
 - Fix implemented: Added hamburger toggle and a mobile nav panel with all links.
 - Files changed: `task/frontend/src/components/Navbar.tsx`
 - Testing evidence: Menu opens/closes on mobile and links are accessible.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-032
+
+- Severity: Low
+- Area: Frontend
+- Type: UI/UX
+- What was wrong: AI Assistant tab bar and text did not fit on mobile screens.
+- Impact: Tabs overflowed and content was hard to use on small screens.
+- Workaround (if any): None.
+- Fix implemented: Converted tabs to a responsive grid and reduced text/icon sizes on mobile.
+- Files changed: `task/frontend/src/pages/AIHealthAssistant.tsx`
+- Testing evidence: Tabs fit within the viewport on mobile.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-033
+
+- Severity: Low
+- Area: Docs
+- Type: Formatting
+- What was wrong: Extra blank lines inside the issues table broke Markdown table rendering.
+- Impact: Table appeared split or misaligned.
+- Workaround (if any): None.
+- Fix implemented: Removed blank lines within the table block.
+- Files changed: `ISSUES_AND_WORKAROUNDS.md`
+- Testing evidence: Table renders as a single continuous Markdown table.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-034
+
+- Severity: Low
+- Area: Frontend
+- Type: UI/UX
+- What was wrong: Notifications dropdown was positioned with a fixed width and right offset, causing overflow on mobile.
+- Impact: Notification panel went off-screen and was hard to read.
+- Workaround (if any): None.
+- Fix implemented: Made dropdown width responsive and centered it on small screens.
+- Files changed: `task/frontend/src/components/NotificationBell.tsx`
+- Testing evidence: Notification panel stays within the viewport on mobile.
 - Date resolved: 2026-01-30
 
 ### Issue HF-020

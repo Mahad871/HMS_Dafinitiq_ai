@@ -93,7 +93,7 @@ const AIHealthAssistant = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12">
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -101,62 +101,62 @@ const AIHealthAssistant = () => {
         >
           <div className="flex items-center justify-center mb-4">
             <Bot className="h-12 w-12 text-primary-600 mr-3" />
-            <h1 className="text-4xl font-bold text-gray-900">AI Health Assistant</h1>
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900">AI Health Assistant</h1>
           </div>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-600 text-sm sm:text-lg">
             Get instant health advice powered by advanced AI
           </p>
         </motion.div>
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="flex border-b">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 sm:p-0 border-b">
             <button
               onClick={() => setActiveTab('advice')}
-              className={`flex-1 py-4 px-6 flex items-center justify-center space-x-2 ${
+              className={`w-full py-3 sm:py-4 px-3 sm:px-6 flex flex-col sm:flex-row items-center justify-center sm:space-x-2 text-xs sm:text-sm ${
                 activeTab === 'advice'
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <Sparkles className="h-5 w-5" />
-              <span>Health Advice</span>
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="mt-1 sm:mt-0">Health Advice</span>
             </button>
             <button
               onClick={() => setActiveTab('recommendation')}
-              className={`flex-1 py-4 px-6 flex items-center justify-center space-x-2 ${
+              className={`w-full py-3 sm:py-4 px-3 sm:px-6 flex flex-col sm:flex-row items-center justify-center sm:space-x-2 text-xs sm:text-sm ${
                 activeTab === 'recommendation'
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <Stethoscope className="h-5 w-5" />
-              <span>Doctor Recommendation</span>
+              <Stethoscope className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="mt-1 sm:mt-0">Doctor Recommendation</span>
             </button>
             <button
               onClick={() => setActiveTab('tips')}
-              className={`flex-1 py-4 px-6 flex items-center justify-center space-x-2 ${
+              className={`w-full py-3 sm:py-4 px-3 sm:px-6 flex flex-col sm:flex-row items-center justify-center sm:space-x-2 text-xs sm:text-sm ${
                 activeTab === 'tips'
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <Heart className="h-5 w-5" />
-              <span>Health Tips</span>
+              <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="mt-1 sm:mt-0">Health Tips</span>
             </button>
             <button
               onClick={() => setActiveTab('analyze')}
-              className={`flex-1 py-4 px-6 flex items-center justify-center space-x-2 ${
+              className={`w-full py-3 sm:py-4 px-3 sm:px-6 flex flex-col sm:flex-row items-center justify-center sm:space-x-2 text-xs sm:text-sm ${
                 activeTab === 'analyze'
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <FileText className="h-5 w-5" />
-              <span>Analyze Report</span>
+              <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="mt-1 sm:mt-0">Analyze Report</span>
             </button>
           </div>
 
-          <div className="p-8">
+          <div className="p-4 sm:p-8">
             {activeTab === 'advice' && (
               <div className="space-y-6">
                 <div>
@@ -303,7 +303,7 @@ const AIHealthAssistant = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200"
+                className="mt-8 p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200"
               >
                 <div className="flex items-center mb-4">
                   <Bot className="h-6 w-6 text-primary-600 mr-2" />
