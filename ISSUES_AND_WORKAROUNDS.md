@@ -35,6 +35,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-017 | Low | Frontend | UI/UX | Pie chart labels overlap in analytics | Chart labels are unreadable | N/A | Replace inline labels with legend | task/frontend/src/pages/Analytics.tsx | Fixed | 2026-01-30 |
 | HF-018 | Medium | Frontend | UX | Doctor dashboard tabs have no loading feedback | Users unsure if filter change is working | N/A | Trigger loading when switching filters | task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
 | HF-019 | Medium | Frontend | UX | Notifications panel cannot be closed easily | Dropdown stays open and blocks UI | N/A | Add close button and click-outside handler | task/frontend/src/components/NotificationBell.tsx | Fixed | 2026-01-30 |
+| HF-031 | Medium | Frontend | UI/UX | Navbar not responsive on mobile | Navigation links not accessible on small screens | N/A | Add mobile menu toggle and collapsible links | task/frontend/src/components/Navbar.tsx | Fixed | 2026-01-30 |
 | HF-020 | Critical | Backend | Security | Role escalation allowed on registration | Users can register as admin | N/A | TBD | task/backend/src/controllers/authController.ts | Open |  |
 | HF-021 | High | Backend | Security | CORS allows any origin with credentials | Cross-origin abuse risk | N/A | TBD | task/backend/src/server.ts | Open |  |
 | HF-022 | Medium | Backend | Config | Global rate limiter throttles auth and core APIs | Users get 429s during normal use | N/A | TBD | task/backend/src/server.ts | Open |  |
@@ -381,6 +382,21 @@ Suggested values:
 - Fix implemented: Added close button and click-outside handler.
 - Files changed: `task/frontend/src/components/NotificationBell.tsx`
 - Testing evidence: Dropdown closes via close button or outside click.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-031
+
+- Severity: Medium
+- Area: Frontend
+- Type: UI/UX
+- What was wrong: Navbar lacked a mobile layout and links were hidden on small screens.
+- Impact: Mobile users could not access navigation links.
+- Workaround (if any): None.
+- Fix implemented: Added hamburger toggle and a mobile nav panel with all links.
+- Files changed: `task/frontend/src/components/Navbar.tsx`
+- Testing evidence: Menu opens/closes on mobile and links are accessible.
 - Date resolved: 2026-01-30
 
 ### Issue HF-020
