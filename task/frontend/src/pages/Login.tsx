@@ -30,6 +30,8 @@ const Login = () => {
       setLoading(false);
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 

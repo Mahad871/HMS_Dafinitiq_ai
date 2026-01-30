@@ -21,6 +21,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-008 | High | Frontend | Bug | doctorService.getAppointments returned array instead of object | Doctor dashboard crashed on `appointments.map` | N/A | Return response data object and default to empty array | task/frontend/src/services/doctorService.ts; task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
 | HF-009 | Medium | Backend | Config | dotenv not loaded before passport config | Google OAuth always reported as not configured | N/A | Load dotenv in passport config before checking env vars | task/backend/src/config/passport.ts | Fixed | 2026-01-30 |
 | HF-010 | High | Backend | Config | Gemini model `gemini-pro` not available | AI endpoints fail with 404 from Gemini API | N/A | Switch to stable model `gemini-2.5-flash` in service | task/backend/src/services/geminiService.ts | Fixed | 2026-01-30 |
+| HF-011 | Medium | Frontend | Bug | Login button stuck in loading state on failed auth | User cannot retry login without refresh | N/A | Reset loading state in a `finally` block | task/frontend/src/pages/Login.tsx | Fixed | 2026-01-30 |
 
 Suggested values:
 
@@ -131,6 +132,21 @@ Suggested values:
 - Fix implemented: Switched to a stable Gemini model (`gemini-2.5-flash`) in the service without requiring a new env var.
 - Files changed: `task/backend/src/services/geminiService.ts`
 - Testing evidence: Gemini requests succeed when a valid `GEMINI_API_KEY` is set.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-011
+
+- Severity: Medium
+- Area: Frontend
+- Type: Bug
+- What was wrong: On failed login, `loading` was never reset, leaving the button stuck on "Logging in...".
+- Impact: User could not retry login without refreshing the page.
+- Workaround (if any): Refresh page.
+- Fix implemented: Move `setLoading(false)` into a `finally` block so it runs on success or failure.
+- Files changed: `task/frontend/src/pages/Login.tsx`
+- Testing evidence: After a failed login, the button returns to "Login" and is clickable.
 - Date resolved: 2026-01-30
 
 ## Notes and Workarounds (Global)
