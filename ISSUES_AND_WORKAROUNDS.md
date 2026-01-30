@@ -1,6 +1,4 @@
 
-
-
 # Issues and Workarounds Tracker
 
 Use this document to record issues found and solutions implemented while bringing the platform to a fully working state.
@@ -17,6 +15,10 @@ This template follows the assessment requirements from the project PDF.
 
 | ID | Severity | Area | Type | Description | Impact | Workaround | Fix Summary | Files Changed | Status | Date |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| HF-001 | Medium | Frontend | Bug | Analytics link visible to patients in Navbar | Patients could access analytics page incorrectly | N/A | Changed Navbar so only doctors see analytics link | task/frontend/src/components/Navbar.tsx | Fixed | 2026-01-30 |
+| HF-002 | High | Backend | Security | Chat actions lack participant checks | Any authed user can mark/read or send messages in other chats | N/A | TBD | task/backend/src/controllers/chatController.ts | Open |  |
+| HF-003 | Medium | Backend | Security | Chat creation does not verify appointment relationship | Patients can create chats with any doctor | N/A | TBD | task/backend/src/controllers/chatController.ts | Open |  |
+
 | HF-004 | Medium | Frontend | TypeScript | Duplicate identifier `getHealthTips` in AIHealthAssistant | Build fails in Vite React Babel | N/A | Renamed/removed duplicate declaration to resolve build error | task/frontend/src/pages/AIHealthAssistant.tsx | Fixed | 2026-01-30 |
 | HF-005 | High | Backend | TypeScript | Null/incorrectly typed populated appointment in doctorController | Backend fails to compile and crashes on startup | N/A | Added null/type guards before accessing populated patient/doctor fields | task/backend/src/controllers/doctorController.ts | Fixed | 2026-01-30 |
 | HF-006 | High | Backend | TypeScript | Possible null patient/doctor in appointmentController | Backend fails to compile and crashes on startup | N/A | Added null checks before emailing and return 404 if missing | task/backend/src/controllers/appointmentController.ts | Fixed | 2026-01-30 |
@@ -33,6 +35,17 @@ This template follows the assessment requirements from the project PDF.
 | HF-017 | Low | Frontend | UI/UX | Pie chart labels overlap in analytics | Chart labels are unreadable | N/A | Replace inline labels with legend | task/frontend/src/pages/Analytics.tsx | Fixed | 2026-01-30 |
 | HF-018 | Medium | Frontend | UX | Doctor dashboard tabs have no loading feedback | Users unsure if filter change is working | N/A | Trigger loading when switching filters | task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
 | HF-019 | Medium | Frontend | UX | Notifications panel cannot be closed easily | Dropdown stays open and blocks UI | N/A | Add close button and click-outside handler | task/frontend/src/components/NotificationBell.tsx | Fixed | 2026-01-30 |
+| HF-020 | Critical | Backend | Security | Role escalation allowed on registration | Users can register as admin | N/A | TBD | task/backend/src/controllers/authController.ts | Open |  |
+| HF-021 | High | Backend | Security | CORS allows any origin with credentials | Cross-origin abuse risk | N/A | TBD | task/backend/src/server.ts | Open |  |
+| HF-022 | Medium | Backend | Config | Global rate limiter throttles auth and core APIs | Users get 429s during normal use | N/A | TBD | task/backend/src/server.ts | Open |  |
+| HF-023 | Medium | Backend | Security | Error responses expose raw error objects | Internal details leak to clients | N/A | TBD | task/backend/src/controllers/* | Open |  |
+| HF-024 | Medium | Backend | Security | S3 uploads set public-read ACL by default | Public exposure or blocked by BPA | N/A | TBD | task/backend/src/services/s3Service.ts | Open |  |
+| HF-025 | High | Backend | Security | File delete endpoint lacks ownership checks | Any authed user can delete files | N/A | TBD | task/backend/src/controllers/uploadController.ts | Open |  |
+| HF-026 | Medium | Backend | Security | Session secret fallback + MemoryStore | Insecure for production use | N/A | TBD | task/backend/src/server.ts | Open |  |
+| HF-027 | High | Backend | Data Integrity | Appointment booking not atomic | Double-booking possible under race conditions | N/A | TBD | task/backend/src/controllers/appointmentController.ts; task/backend/src/models/Appointment.ts | Open |  |
+| HF-028 | Medium | Backend | Validation | Appointment status update accepts any string | Invalid statuses can be stored | N/A | TBD | task/backend/src/controllers/doctorController.ts | Open |  |
+| HF-029 | Medium | Backend | Bug/Performance | Patient analytics totalSpent uses N+1 queries and may undercount | Incorrect totals and slow analytics | N/A | TBD | task/backend/src/controllers/analyticsController.ts | Open |  |
+| HF-030 | Low | Backend | Performance | Artificial delay in appointment creation | Unnecessary latency in booking flow | N/A | TBD | task/backend/src/controllers/appointmentController.ts | Open |  |
 
 Suggested values:
 
@@ -252,6 +265,96 @@ Suggested values:
 
 ---
 
+### Issue HF-002
+
+- Severity: High
+- Area: Backend
+- Type: Security
+- What was wrong: `sendMessage` and `markMessagesAsRead` do not verify the requester is a chat participant.
+- Impact: Any authenticated user can interact with arbitrary chats if they know the chat ID.
+- Workaround (if any): None.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/controllers/chatController.ts`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
+
+### Issue HF-003
+
+- Severity: Medium
+- Area: Backend
+- Type: Security
+- What was wrong: `createChat` does not verify a valid appointment between patient and doctor.
+- Impact: Patients can create unsolicited chats with any doctor ID.
+- Workaround (if any): None.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/controllers/chatController.ts`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
+
+### Issue HF-027
+
+- Severity: High
+- Area: Backend
+- Type: Data Integrity
+- What was wrong: Appointment booking checks availability then creates a record without an atomic constraint.
+- Impact: The same time slot can be double-booked under concurrent requests.
+- Workaround (if any): None.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/controllers/appointmentController.ts`, `task/backend/src/models/Appointment.ts`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
+
+### Issue HF-028
+
+- Severity: Medium
+- Area: Backend
+- Type: Validation
+- What was wrong: Status updates accept any string and do not validate against `AppointmentStatus`.
+- Impact: Invalid statuses can be saved and break UI assumptions.
+- Workaround (if any): None.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/controllers/doctorController.ts`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
+
+### Issue HF-029
+
+- Severity: Medium
+- Area: Backend
+- Type: Bug/Performance
+- What was wrong: Patient analytics totals compute `Doctor.findOne` per appointment and may miss matches when doctor is populated.
+- Impact: Incorrect totals and slower analytics due to N+1 queries.
+- Workaround (if any): None.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/controllers/analyticsController.ts`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
+
+### Issue HF-030
+
+- Severity: Low
+- Area: Backend
+- Type: Performance
+- What was wrong: Artificial `setTimeout(100)` in appointment creation adds latency.
+- Impact: Slower booking flow without functional benefit.
+- Workaround (if any): None.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/controllers/appointmentController.ts`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
+
 ### Issue HF-018
 
 - Severity: Medium
@@ -279,6 +382,111 @@ Suggested values:
 - Files changed: `task/frontend/src/components/NotificationBell.tsx`
 - Testing evidence: Dropdown closes via close button or outside click.
 - Date resolved: 2026-01-30
+
+### Issue HF-020
+
+- Severity: Critical
+- Area: Backend
+- Type: Security
+- What was wrong: Registration accepts any `role`, including `admin`, without server-side restriction.
+- Impact: Users can self-register with elevated privileges.
+- Workaround (if any): None.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/controllers/authController.ts`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
+
+### Issue HF-021
+
+- Severity: High
+- Area: Backend
+- Type: Security
+- What was wrong: CORS is configured with `origin: '*'` and `credentials: true`.
+- Impact: Cross-origin requests can be abused; browsers also block credentialed requests with wildcard origins.
+- Workaround (if any): None.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/server.ts`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
+
+### Issue HF-022
+
+- Severity: Medium
+- Area: Backend
+- Type: Config
+- What was wrong: Global rate limiter applies to all routes, including auth and analytics.
+- Impact: Users hit 429 during normal usage (login, page refreshes).
+- Workaround (if any): Wait for window reset.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/server.ts`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
+
+### Issue HF-023
+
+- Severity: Medium
+- Area: Backend
+- Type: Security
+- What was wrong: Several controllers return raw error objects in responses.
+- Impact: Internal stack traces or error details can be exposed to clients.
+- Workaround (if any): None.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/controllers/*`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
+
+### Issue HF-024
+
+- Severity: Medium
+- Area: Backend
+- Type: Security
+- What was wrong: S3 uploads set `ACL: 'public-read'` by default.
+- Impact: Files can become publicly accessible or fail if Block Public Access is enabled.
+- Workaround (if any): None.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/services/s3Service.ts`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
+
+### Issue HF-025
+
+- Severity: High
+- Area: Backend
+- Type: Security
+- What was wrong: File delete endpoint accepts any `fileUrl` without ownership checks.
+- Impact: Any authenticated user can delete arbitrary files if they know the URL.
+- Workaround (if any): None.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/controllers/uploadController.ts`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
+
+### Issue HF-026
+
+- Severity: Medium
+- Area: Backend
+- Type: Security
+- What was wrong: Session secret falls back to a hardcoded value and uses default MemoryStore.
+- Impact: Insecure session handling in production.
+- Workaround (if any): None.
+- Fix implemented: TBD.
+- Files changed: `task/backend/src/server.ts`
+- Testing evidence: N/A.
+- Date resolved:
+
+---
 
 ## Notes and Workarounds (Global)
 
