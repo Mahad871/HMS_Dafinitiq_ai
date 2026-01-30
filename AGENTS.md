@@ -1,0 +1,7 @@
+# Agent Instructions
+
+## Issue tracking
+After each task, check whether any problem/issue was fixed.
+If yes, update `ISSUES_AND_WORKAROUNDS.md` with a new entry (including severity, area/type, fix summary, files changed, status, and date).
+If you are not sure whether a fix qualifies as an issue resolution, ask the user before updating the tracker.
+If no issue was fixed, still ask the user for confirmation; only add an entry if they explicitly tell you to.
