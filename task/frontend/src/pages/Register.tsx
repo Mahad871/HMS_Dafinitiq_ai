@@ -8,6 +8,49 @@ import { Mail, Lock, User, Phone, Chrome } from 'lucide-react';
 import { UserRole } from '../types';
 
 const Register = () => {
+  const specializationSuggestions = [
+    'Cardiologist',
+    'Dermatologist',
+    'Pediatrician',
+    'Neurologist',
+    'Orthopedic',
+    'Psychiatrist',
+    'General Physician',
+    'Gynecologist',
+    'ENT Specialist',
+    'Oncologist',
+    'Ophthalmologist',
+    'Urologist',
+    'Endocrinologist',
+    'Gastroenterologist',
+    'Pulmonologist',
+  ];
+
+  const qualificationSuggestions = [
+    'MBBS',
+    'MBBS, MD',
+    'MBBS, FCPS',
+    'MBBS, MS',
+    'MBBS, MRCP',
+    'BDS',
+    'PharmD',
+    'DPT',
+    'BSN',
+    'MD',
+  ];
+
+  const currencyOptions = [
+    { code: 'USD', name: 'US Dollar', symbol: '$' },
+    { code: 'PKR', name: 'Pakistani Rupee', symbol: '₨' },
+    { code: 'EUR', name: 'Euro', symbol: '€' },
+    { code: 'GBP', name: 'British Pound', symbol: '£' },
+    { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ' },
+    { code: 'SAR', name: 'Saudi Riyal', symbol: '﷼' },
+    { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
+    { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
+    { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
+  ];
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,6 +63,7 @@ const Register = () => {
     consultationFee: '',
     bio: '',
   });
+  const [currency, setCurrency] = useState('USD');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -136,8 +180,15 @@ const Register = () => {
                   value={formData.specialization}
                   onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  list="specialization-suggestions"
+                  placeholder="Start typing to see suggestions..."
                   required
                 />
+                <datalist id="specialization-suggestions">
+                  {specializationSuggestions.map((spec) => (
+                    <option key={spec} value={spec} />
+                  ))}
+                </datalist>
               </div>
 
               <div>
@@ -159,20 +210,48 @@ const Register = () => {
                   value={formData.qualification}
                   onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  list="qualification-suggestions"
+                  placeholder="Start typing to see suggestions..."
                   required
                 />
+                <datalist id="qualification-suggestions">
+                  {qualificationSuggestions.map((qual) => (
+                    <option key={qual} value={qual} />
+                  ))}
+                </datalist>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Consultation Fee</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.consultationFee}
-                  onChange={(e) => setFormData({ ...formData, consultationFee: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                  required
-                />
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="col-span-1">
+                    <input
+                      type="text"
+                      value={currency}
+                      onChange={(e) => setCurrency(e.target.value.toUpperCase())}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                      list="currency-options"
+                      placeholder="Currency"
+                      aria-label="Currency"
+                    />
+                    <datalist id="currency-options">
+                      {currencyOptions.map((c) => (
+                        <option key={c.code} value={c.code}>{`${c.code} - ${c.name}`}</option>
+                      ))}
+                    </datalist>
+                  </div>
+                  <div className="col-span-2">
+                    <input
+                      type="number"
+                      min="0"
+                      value={formData.consultationFee}
+                      onChange={(e) => setFormData({ ...formData, consultationFee: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                      placeholder={`Amount (${currency || 'USD'})`}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
               <div>

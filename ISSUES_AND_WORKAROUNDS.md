@@ -24,6 +24,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-011 | Medium | Frontend | Bug | Login button stuck in loading state on failed auth | User cannot retry login without refresh | N/A | Reset loading state in a `finally` block | task/frontend/src/pages/Login.tsx | Fixed | 2026-01-30 |
 | HF-012 | High | Frontend | Bug | Doctor users not visible because no doctor profile created | Patients see empty doctor list | N/A | Collect doctor profile fields on signup and create profile after register | task/frontend/src/pages/Register.tsx | Fixed | 2026-01-30 |
 | HF-013 | High | Frontend | Performance | Doctor list API called on every render | Rate limit triggered on backend | N/A | Memoize fetch and add effect dependencies | task/frontend/src/pages/Home.tsx | Fixed | 2026-01-30 |
+| HF-014 | Low | Frontend | UI/UX | Doctor signup inputs lacked suggestions and currency picker | Harder data entry during doctor signup | N/A | Added datalist suggestions and searchable currency input | task/frontend/src/pages/Register.tsx | Fixed | 2026-01-30 |
 
 Suggested values:
 
@@ -179,6 +180,21 @@ Suggested values:
 - Fix implemented: Wrapped fetch in `useCallback` and added proper dependencies so it only runs when specialization changes.
 - Files changed: `task/frontend/src/pages/Home.tsx`
 - Testing evidence: Network shows a single call on load and on specialization change only.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-014
+
+- Severity: Low
+- Area: Frontend
+- Type: UI/UX
+- What was wrong: Doctor signup fields had plain inputs with no suggestions or currency selector.
+- Impact: Slower, error‑prone data entry for specialization/qualification and fee.
+- Workaround (if any): Manual typing.
+- Fix implemented: Added datalist suggestions for specialization/qualification and a searchable currency input next to fee.
+- Files changed: `task/frontend/src/pages/Register.tsx`
+- Testing evidence: Signup shows suggestion dropdowns and currency picker for doctors.
 - Date resolved: 2026-01-30
 
 ## Notes and Workarounds (Global)
