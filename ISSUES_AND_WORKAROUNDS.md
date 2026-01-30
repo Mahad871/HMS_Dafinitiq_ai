@@ -19,6 +19,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-006 | High | Backend | TypeScript | Possible null patient/doctor in appointmentController | Backend fails to compile and crashes on startup | N/A | Added null checks before emailing and return 404 if missing | task/backend/src/controllers/appointmentController.ts | Fixed | 2026-01-30 |
 | HF-007 | High | Frontend | Bug | TDZ error calling fetchAppointments before initialization in DoctorDashboard | Doctor dashboard crashes on render | N/A | Wrapped fetchAppointments in useCallback and moved effect dependency to avoid TDZ | task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
 | HF-008 | High | Frontend | Bug | doctorService.getAppointments returned array instead of object | Doctor dashboard crashed on `appointments.map` | N/A | Return response data object and default to empty array | task/frontend/src/services/doctorService.ts; task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
+| HF-009 | Medium | Backend | Config | dotenv not loaded before passport config | Google OAuth always reported as not configured | N/A | Load dotenv in passport config before checking env vars | task/backend/src/config/passport.ts | Fixed | 2026-01-30 |
 
 Suggested values:
 
@@ -99,6 +100,21 @@ Suggested values:
 - Fix implemented: Return the response data object and default to an empty array when setting state.
 - Files changed: `task/frontend/src/services/doctorService.ts`, `task/frontend/src/pages/DoctorDashboard.tsx`
 - Testing evidence: Doctor dashboard renders and lists appointments without the `map` error.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-009
+
+- Severity: Medium
+- Area: Backend
+- Type: Config
+- What was wrong: `passport` config ran before `.env` was loaded, so `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` were undefined.
+- Impact: Backend always logged "Google OAuth not configured" even when env vars existed.
+- Workaround (if any): None.
+- Fix implemented: Call `dotenv.config()` in `task/backend/src/config/passport.ts` before checking env vars.
+- Files changed: `task/backend/src/config/passport.ts`
+- Testing evidence: Startup log no longer shows the Google OAuth warning when env vars are set.
 - Date resolved: 2026-01-30
 
 ## Notes and Workarounds (Global)
