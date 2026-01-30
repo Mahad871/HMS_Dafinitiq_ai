@@ -334,21 +334,19 @@ const Analytics = () => {
                         setActiveStatus(entry?._id ?? null);
                       }}
                     >
-                      {appointmentsByStatus.map(
-                        (entry: any, index: number) => {
-                          const isActive =
-                            !activeStatus || entry._id === activeStatus;
-                          return (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={COLORS[index % COLORS.length]}
-                              opacity={isActive ? 1 : 0.3}
-                              stroke={isActive ? "#111827" : "none"}
-                              strokeWidth={isActive ? 1 : 0}
-                            />
-                          );
-                        },
-                      )}
+                      {appointmentsByStatus.map((entry: any, index: number) => {
+                        const isActive =
+                          !activeStatus || entry._id === activeStatus;
+                        return (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % COLORS.length]}
+                            opacity={isActive ? 1 : 0.3}
+                            stroke={isActive ? "#111827" : "none"}
+                            strokeWidth={isActive ? 1 : 0}
+                          />
+                        );
+                      })}
                     </Pie>
                     <Tooltip />
                   </PieChart>
@@ -361,7 +359,9 @@ const Analytics = () => {
                       <div
                         key={entry._id}
                         className={`flex items-center justify-between gap-3 ${
-                          isActive ? "text-gray-900 font-semibold" : "text-gray-600"
+                          isActive
+                            ? "text-gray-900 font-semibold"
+                            : "text-gray-600"
                         }`}
                         onMouseEnter={() => setActiveStatus(entry._id)}
                         onMouseLeave={() => setActiveStatus(null)}
