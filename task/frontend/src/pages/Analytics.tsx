@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { AppointmentStatus, UserRole } from '../types';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { AppointmentStatus, UserRole } from "../types";
 import {
   TrendingUp,
   Calendar,
@@ -9,32 +9,44 @@ import {
   Star,
   Activity,
   BarChart3,
-} from 'lucide-react';
-import api from '../services/api';
-import toast from 'react-hot-toast';
-import { motion } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+} from "lucide-react";
+import api from "../services/api";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
 const Analytics = () => {
   const { user } = useAuth();
   const [analytics, setAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeStatus, setActiveStatus] = useState<string | null>(null);
 
   const fetchAnalytics = useCallback(async () => {
     if (!user) return;
     setLoading(true);
     try {
-      let endpoint = '/analytics/patient';
+      let endpoint = "/analytics/patient";
       if (user?.role === UserRole.DOCTOR) {
-        endpoint = '/analytics/doctor';
+        endpoint = "/analytics/doctor";
       } else if (user?.role === UserRole.ADMIN) {
-        endpoint = '/analytics/admin';
+        endpoint = "/analytics/admin";
       }
 
       const { data } = await api.get(endpoint);
       setAnalytics(data);
     } catch (error) {
-      toast.error('Failed to load analytics');
+      toast.error("Failed to load analytics");
     } finally {
       setLoading(false);
     }
@@ -44,13 +56,13 @@ const Analytics = () => {
     fetchAnalytics();
   }, [fetchAnalytics]);
 
-  const COLORS = ['#0ea5e9', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
+  const COLORS = ["#0ea5e9", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444"];
 
   const safeAnalytics = useMemo(() => {
     return {
       totalAppointments: analytics?.totalAppointments ?? 0,
       completedAppointments: analytics?.completedAppointments ?? 0,
-      avgRating: analytics?.avgRating ?? '0.0',
+      avgRating: analytics?.avgRating ?? "0.0",
       estimatedRevenue: analytics?.estimatedRevenue ?? 0,
       doctorsVisited: analytics?.doctorsVisited ?? 0,
       totalSpent: analytics?.totalSpent ?? 0,
@@ -66,50 +78,74 @@ const Analytics = () => {
     AppointmentStatus.COMPLETED,
   ];
 
+  const statusLabels: Record<string, string> = {
+    [AppointmentStatus.PENDING]: "Pending",
+    [AppointmentStatus.CONFIRMED]: "Confirmed",
+    [AppointmentStatus.CANCELLED]: "Cancelled",
+    [AppointmentStatus.COMPLETED]: "Completed",
+  };
+
   const appointmentsByStatus = useMemo(() => {
     const raw = safeAnalytics.appointmentsByStatus;
-    const fallbackAppointments = analytics?.appointments || analytics?.recentAppointments || [];
+    const fallbackAppointments =
+      analytics?.appointments || analytics?.recentAppointments || [];
 
     const computeFromAppointments = (items: any[]) => {
       const counts = new Map<string, number>();
       items.forEach((apt: any) => {
-        const key = String(apt?.status ?? '');
+        const key = String(apt?.status ?? "");
         if (!key) return;
         counts.set(key, (counts.get(key) ?? 0) + 1);
       });
       return statusOrder.map((status) => ({
         _id: status,
+        name: statusLabels[status] ?? status,
         count: counts.get(status) ?? 0,
       }));
     };
 
-    if ((!raw || (Array.isArray(raw) && raw.length === 0)) && fallbackAppointments.length > 0) {
+    if (
+      (!raw || (Array.isArray(raw) && raw.length === 0)) &&
+      fallbackAppointments.length > 0
+    ) {
       return computeFromAppointments(fallbackAppointments);
     }
 
     const normalized = Array.isArray(raw)
       ? raw
-      : Object.entries(raw || {}).map(([key, value]) => ({ _id: key, count: value }));
+      : Object.entries(raw || {}).map(([key, value]) => ({
+          _id: key,
+          count: value,
+        }));
 
     const counts = new Map<string, number>();
     normalized.forEach((entry: any) => {
-      const key = String(entry?._id ?? '');
+      const key = String(entry?._id ?? "");
       const count = Number(entry?.count ?? 0);
       counts.set(key, count);
     });
 
     return statusOrder.map((status) => ({
       _id: status,
+      name: statusLabels[status] ?? status,
       count: counts.get(status) ?? 0,
     }));
-  }, [safeAnalytics.appointmentsByStatus, analytics?.appointments, analytics?.recentAppointments]);
+  }, [
+    safeAnalytics.appointmentsByStatus,
+    analytics?.appointments,
+    analytics?.recentAppointments,
+  ]);
 
   const hasStatusData = appointmentsByStatus.some((entry) => entry.count > 0);
 
-  const monthlyAppointments = safeAnalytics.monthlyAppointments.map((item: any) => ({
-    ...item,
-    monthLabel: item?._id?.month ? `${item._id.month}/${item._id.year}` : 'Unknown',
-  }));
+  const monthlyAppointments = safeAnalytics.monthlyAppointments.map(
+    (item: any) => ({
+      ...item,
+      monthLabel: item?._id?.month
+        ? `${item._id.month}/${item._id.year}`
+        : "Unknown",
+    }),
+  );
 
   if (loading) {
     return (
@@ -127,7 +163,9 @@ const Analytics = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Analytics Dashboard
+          </h1>
           <p className="text-gray-600">Track your healthcare journey</p>
         </motion.div>
 
@@ -144,7 +182,9 @@ const Analytics = () => {
                   <Calendar className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">{safeAnalytics.totalAppointments}</p>
+                <p className="text-3xl font-bold">
+                  {safeAnalytics.totalAppointments}
+                </p>
                 <p className="text-blue-100">Total Appointments</p>
               </motion.div>
 
@@ -158,7 +198,9 @@ const Analytics = () => {
                   <Activity className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">{safeAnalytics.completedAppointments}</p>
+                <p className="text-3xl font-bold">
+                  {safeAnalytics.completedAppointments}
+                </p>
                 <p className="text-purple-100">Completed</p>
               </motion.div>
 
@@ -186,7 +228,9 @@ const Analytics = () => {
                   <DollarSign className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">${safeAnalytics.estimatedRevenue}</p>
+                <p className="text-3xl font-bold">
+                  ${safeAnalytics.estimatedRevenue}
+                </p>
                 <p className="text-yellow-100">Estimated Revenue</p>
               </motion.div>
             </>
@@ -203,7 +247,9 @@ const Analytics = () => {
                   <Calendar className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">{safeAnalytics.totalAppointments}</p>
+                <p className="text-3xl font-bold">
+                  {safeAnalytics.totalAppointments}
+                </p>
                 <p className="text-blue-100">Total Appointments</p>
               </motion.div>
 
@@ -217,7 +263,9 @@ const Analytics = () => {
                   <Users className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">{safeAnalytics.doctorsVisited}</p>
+                <p className="text-3xl font-bold">
+                  {safeAnalytics.doctorsVisited}
+                </p>
                 <p className="text-purple-100">Doctors Visited</p>
               </motion.div>
 
@@ -231,7 +279,9 @@ const Analytics = () => {
                   <Activity className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">{safeAnalytics.completedAppointments}</p>
+                <p className="text-3xl font-bold">
+                  {safeAnalytics.completedAppointments}
+                </p>
                 <p className="text-green-100">Completed</p>
               </motion.div>
 
@@ -245,7 +295,9 @@ const Analytics = () => {
                   <DollarSign className="h-8 w-8" />
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">${safeAnalytics.totalSpent}</p>
+                <p className="text-3xl font-bold">
+                  ${safeAnalytics.totalSpent}
+                </p>
                 <p className="text-yellow-100">Total Spent</p>
               </motion.div>
             </>
@@ -265,25 +317,70 @@ const Analytics = () => {
               Appointments by Status
             </h3>
             {hasStatusData ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={appointmentsByStatus}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={(entry) => `${String(entry._id ?? 'Unknown')}: ${entry.count}`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="count"
-                  >
-                    {appointmentsByStatus.map((entry: any, index: number) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              <div className="relative">
+                <ResponsiveContainer width="100%" height={260}>
+                  <PieChart>
+                    <Pie
+                      data={appointmentsByStatus}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="count"
+                      onMouseLeave={() => setActiveStatus(null)}
+                      onMouseEnter={(_, index) => {
+                        const entry = appointmentsByStatus[index];
+                        setActiveStatus(entry?._id ?? null);
+                      }}
+                    >
+                      {appointmentsByStatus.map(
+                        (entry: any, index: number) => {
+                          const isActive =
+                            !activeStatus || entry._id === activeStatus;
+                          return (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={COLORS[index % COLORS.length]}
+                              opacity={isActive ? 1 : 0.3}
+                              stroke={isActive ? "#111827" : "none"}
+                              strokeWidth={isActive ? 1 : 0}
+                            />
+                          );
+                        },
+                      )}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+
+                <div className="absolute top-2 right-2 bg-white/90 backdrop-blur rounded-md shadow px-2 py-1 text-xs space-y-1">
+                  {appointmentsByStatus.map((entry: any, index: number) => {
+                    const isActive = entry._id === activeStatus;
+                    return (
+                      <div
+                        key={entry._id}
+                        className={`flex items-center justify-between gap-3 ${
+                          isActive ? "text-gray-900 font-semibold" : "text-gray-600"
+                        }`}
+                        onMouseEnter={() => setActiveStatus(entry._id)}
+                        onMouseLeave={() => setActiveStatus(null)}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="inline-block h-2.5 w-2.5 rounded-full"
+                            style={{
+                              backgroundColor: COLORS[index % COLORS.length],
+                            }}
+                          />
+                          <span>{entry.name}</span>
+                        </div>
+                        <span>{entry.count}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             ) : (
               <div className="h-[300px] flex items-center justify-center text-gray-500">
                 No status data yet

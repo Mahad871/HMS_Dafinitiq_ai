@@ -30,6 +30,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-014 | Low | Frontend | UI/UX | Doctor signup inputs lacked suggestions and currency picker | Harder data entry during doctor signup | N/A | Added datalist suggestions and searchable currency input | task/frontend/src/pages/Register.tsx | Fixed | 2026-01-30 |
 | HF-015 | Medium | Frontend | Bug | Doctor dashboard status changes not reflected without refresh | Users see stale appointment statuses | N/A | Update appointment status in local state after API success | task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
 | HF-016 | Medium | Frontend | Bug | Analytics charts not rendering reliably | Analytics cards/charts show blank or incorrect data | N/A | Fix effect deps and add safe defaults for analytics datasets | task/frontend/src/pages/Analytics.tsx | Fixed | 2026-01-30 |
+| HF-017 | Low | Frontend | UI/UX | Pie chart labels overlap in analytics | Chart labels are unreadable | N/A | Replace inline labels with legend | task/frontend/src/pages/Analytics.tsx | Fixed | 2026-01-30 |
 
 Suggested values:
 
@@ -230,6 +231,21 @@ Suggested values:
 - Fix implemented: Added effect dependencies, safe defaults, normalized status data, and fallback counts from appointments when needed.
 - Files changed: `task/frontend/src/pages/Analytics.tsx`
 - Testing evidence: Charts render consistently once data loads.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-017
+
+- Severity: Low
+- Area: Frontend
+- Type: UI/UX
+- What was wrong: Pie chart labels overlapped and were hard to read.
+- Impact: Analytics chart text was cluttered.
+- Workaround (if any): None.
+- Fix implemented: Added a corner legend with hover highlighting and dimming of non-active slices.
+- Files changed: `task/frontend/src/pages/Analytics.tsx`
+- Testing evidence: Pie chart labels no longer overlap.
 - Date resolved: 2026-01-30
 
 ## Notes and Workarounds (Global)
