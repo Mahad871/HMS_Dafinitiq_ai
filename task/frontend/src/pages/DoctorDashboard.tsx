@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { doctorService } from '../services/doctorService';
 import { Appointment, AppointmentStatus } from '../types';
 import toast from 'react-hot-toast';
@@ -10,11 +10,7 @@ const DoctorDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('');
 
-  useEffect(() => {
-    fetchAppointments();
-  }, [filter, fetchAppointments]);
-
-  const fetchAppointments = async () => {
+  const fetchAppointments = useCallback(async () => {
     try {
       const { appointments } = await doctorService.getAppointments(filter);
       setAppointments(appointments);
@@ -23,7 +19,11 @@ const DoctorDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    fetchAppointments();
+  }, [fetchAppointments]);
 
   const handleUpdateStatus = async (id: string, status: AppointmentStatus) => {
     setLoading(true);
