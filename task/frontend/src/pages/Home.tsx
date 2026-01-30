@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { doctorService } from '../services/doctorService';
 import { Doctor } from '../types';
@@ -23,12 +23,9 @@ const Home = () => {
     'General Physician',
   ];
 
-  useEffect(() => {
-    fetchDoctors();
-  });
-
-  const fetchDoctors = async () => {
+  const fetchDoctors = useCallback(async () => {
     try {
+      setLoading(true);
       const params: any = {};
       if (selectedSpecialization && selectedSpecialization !== 'All Specializations') {
         params.specialization = selectedSpecialization;
@@ -40,7 +37,11 @@ const Home = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedSpecialization]);
+
+  useEffect(() => {
+    fetchDoctors();
+  }, [fetchDoctors]);
 
   const filteredDoctors = doctors.filter((doctor) =>
     doctor.userId.name.toLowerCase().includes(search.toLowerCase()) ||

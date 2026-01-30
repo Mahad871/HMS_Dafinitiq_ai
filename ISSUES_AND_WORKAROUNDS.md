@@ -23,6 +23,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-010 | High | Backend | Config | Gemini model `gemini-pro` not available | AI endpoints fail with 404 from Gemini API | N/A | Switch to stable model `gemini-2.5-flash` in service | task/backend/src/services/geminiService.ts | Fixed | 2026-01-30 |
 | HF-011 | Medium | Frontend | Bug | Login button stuck in loading state on failed auth | User cannot retry login without refresh | N/A | Reset loading state in a `finally` block | task/frontend/src/pages/Login.tsx | Fixed | 2026-01-30 |
 | HF-012 | High | Frontend | Bug | Doctor users not visible because no doctor profile created | Patients see empty doctor list | N/A | Collect doctor profile fields on signup and create profile after register | task/frontend/src/pages/Register.tsx | Fixed | 2026-01-30 |
+| HF-013 | High | Frontend | Performance | Doctor list API called on every render | Rate limit triggered on backend | N/A | Memoize fetch and add effect dependencies | task/frontend/src/pages/Home.tsx | Fixed | 2026-01-30 |
 
 Suggested values:
 
@@ -163,6 +164,21 @@ Suggested values:
 - Fix implemented: Added doctor profile fields to the signup form and created the doctor profile after successful registration.
 - Files changed: `task/frontend/src/pages/Register.tsx`
 - Testing evidence: New doctor signups appear in the doctors list after registration.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-013
+
+- Severity: High
+- Area: Frontend
+- Type: Performance
+- What was wrong: The doctors list was fetched on every render because `useEffect` had no dependency array.
+- Impact: Backend rate limits were triggered due to repeated API calls.
+- Workaround (if any): None.
+- Fix implemented: Wrapped fetch in `useCallback` and added proper dependencies so it only runs when specialization changes.
+- Files changed: `task/frontend/src/pages/Home.tsx`
+- Testing evidence: Network shows a single call on load and on specialization change only.
 - Date resolved: 2026-01-30
 
 ## Notes and Workarounds (Global)
