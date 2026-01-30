@@ -7,15 +7,19 @@ if (!apiKey) {
 }
 
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
+const defaultModel = 'gemini-2.5-flash';
+
+const getModel = () => {
+  if (!genAI) {
+    throw new Error('Gemini API is not configured. Please add a valid GEMINI_API_KEY to your .env file.');
+  }
+  return genAI.getGenerativeModel({ model: defaultModel });
+};
 
 export const geminiService = {
   async getHealthAdvice(symptoms: string, medicalHistory?: string): Promise<string> {
-    if (!genAI) {
-      throw new Error('Gemini API is not configured. Please add a valid GEMINI_API_KEY to your .env file.');
-    }
-
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+      const model = getModel();
 
       const prompt = `You are a helpful medical AI assistant. A patient is experiencing the following symptoms: ${symptoms}.
       ${medicalHistory ? `Their medical history includes: ${medicalHistory}.` : ''}
@@ -42,12 +46,8 @@ export const geminiService = {
   },
 
   async getDoctorRecommendation(symptoms: string): Promise<string> {
-    if (!genAI) {
-      throw new Error('Gemini API is not configured. Please add a valid GEMINI_API_KEY to your .env file.');
-    }
-
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+      const model = getModel();
 
       const prompt = `Based on these symptoms: ${symptoms}
       
@@ -68,12 +68,8 @@ export const geminiService = {
   },
 
   async getHealthTips(category: string): Promise<string> {
-    if (!genAI) {
-      throw new Error('Gemini API is not configured. Please add a valid GEMINI_API_KEY to your .env file.');
-    }
-
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+      const model = getModel();
 
       const prompt = `Provide 5 practical health tips for ${category}.
       Make them actionable, easy to follow, and evidence-based.
@@ -92,12 +88,8 @@ export const geminiService = {
   },
 
   async analyzeMedicalReport(reportText: string): Promise<string> {
-    if (!genAI) {
-      throw new Error('Gemini API is not configured. Please add a valid GEMINI_API_KEY to your .env file.');
-    }
-
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+      const model = getModel();
 
       const prompt = `Analyze this medical report and provide a simple explanation in layman's terms:
       

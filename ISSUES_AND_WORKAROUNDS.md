@@ -20,6 +20,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-007 | High | Frontend | Bug | TDZ error calling fetchAppointments before initialization in DoctorDashboard | Doctor dashboard crashes on render | N/A | Wrapped fetchAppointments in useCallback and moved effect dependency to avoid TDZ | task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
 | HF-008 | High | Frontend | Bug | doctorService.getAppointments returned array instead of object | Doctor dashboard crashed on `appointments.map` | N/A | Return response data object and default to empty array | task/frontend/src/services/doctorService.ts; task/frontend/src/pages/DoctorDashboard.tsx | Fixed | 2026-01-30 |
 | HF-009 | Medium | Backend | Config | dotenv not loaded before passport config | Google OAuth always reported as not configured | N/A | Load dotenv in passport config before checking env vars | task/backend/src/config/passport.ts | Fixed | 2026-01-30 |
+| HF-010 | High | Backend | Config | Gemini model `gemini-pro` not available | AI endpoints fail with 404 from Gemini API | N/A | Switch to stable model `gemini-2.5-flash` in service | task/backend/src/services/geminiService.ts | Fixed | 2026-01-30 |
 
 Suggested values:
 
@@ -115,6 +116,21 @@ Suggested values:
 - Fix implemented: Call `dotenv.config()` in `task/backend/src/config/passport.ts` before checking env vars.
 - Files changed: `task/backend/src/config/passport.ts`
 - Testing evidence: Startup log no longer shows the Google OAuth warning when env vars are set.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-010
+
+- Severity: High
+- Area: Backend
+- Type: Config
+- What was wrong: Service requested `gemini-pro`, which is no longer available for the `generateContent` API.
+- Impact: AI endpoints failed with `404 Not Found` from Gemini.
+- Workaround (if any): None.
+- Fix implemented: Switched to a stable Gemini model (`gemini-2.5-flash`) in the service without requiring a new env var.
+- Files changed: `task/backend/src/services/geminiService.ts`
+- Testing evidence: Gemini requests succeed when a valid `GEMINI_API_KEY` is set.
 - Date resolved: 2026-01-30
 
 ## Notes and Workarounds (Global)
