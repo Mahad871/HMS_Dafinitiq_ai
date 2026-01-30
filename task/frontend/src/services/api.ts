@@ -27,7 +27,10 @@ api.interceptors.response.use(
         isRefreshing = true;
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/login';
+        window.dispatchEvent(new Event('auth:logout'));
+        setTimeout(() => {
+          isRefreshing = false;
+        }, 1000);
       }
     }
     return Promise.reject(error);

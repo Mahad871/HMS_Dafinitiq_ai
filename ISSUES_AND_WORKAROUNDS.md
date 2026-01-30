@@ -38,6 +38,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-032 | Low | Frontend | UI/UX | AI Assistant tabs overflow on mobile | Tabs and content wrap poorly on small screens | N/A | Make tabs grid-based and adjust spacing/text sizes | task/frontend/src/pages/AIHealthAssistant.tsx | Fixed | 2026-01-30 |
 | HF-033 | Low | Docs | Formatting | Issues table formatting broken by blank lines | Table renders incorrectly in Markdown | N/A | Remove blank lines within table block | ISSUES_AND_WORKAROUNDS.md | Fixed | 2026-01-30 |
 | HF-034 | Low | Frontend | UI/UX | Notifications dropdown overflows on mobile | Panel goes off-screen and is hard to use | N/A | Make dropdown width responsive and center on small screens | task/frontend/src/components/NotificationBell.tsx | Fixed | 2026-01-30 |
+| HF-035 | Medium | Frontend | Bug | App keeps reloading on repeated 401s | Users experience continuous reloads on auth failures | N/A | Dispatch logout event and avoid hard reload on 401 | task/frontend/src/services/api.ts; task/frontend/src/contexts/AuthContext.tsx | Fixed | 2026-01-30 |
 | HF-020 | Critical | Backend | Security | Role escalation allowed on registration | Users can register as admin | N/A | Restrict registration roles to patient/doctor | task/backend/src/controllers/authController.ts | Fixed | 2026-01-30 |
 | HF-021 | High | Backend | Security | CORS allows any origin with credentials | Cross-origin abuse risk | N/A | Restrict CORS to allowed origins list | task/backend/src/server.ts | Fixed | 2026-01-30 |
 | HF-022 | Medium | Backend | Config | Global rate limiter throttles auth and core APIs | Users get 429s during normal use | N/A | Split auth and general API rate limits | task/backend/src/server.ts | Fixed | 2026-01-30 |
@@ -443,6 +444,21 @@ Suggested values:
 - Fix implemented: Made dropdown width responsive and centered it on small screens.
 - Files changed: `task/frontend/src/components/NotificationBell.tsx`
 - Testing evidence: Notification panel stays within the viewport on mobile.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-035
+
+- Severity: Medium
+- Area: Frontend
+- Type: Bug
+- What was wrong: 401 responses triggered hard redirects, causing repeated reloads when multiple API calls failed.
+- Impact: The app could reload repeatedly and feel unstable.
+- Workaround (if any): None.
+- Fix implemented: Dispatch a logout event on 401 and let the SPA redirect without full reloads.
+- Files changed: `task/frontend/src/services/api.ts`, `task/frontend/src/contexts/AuthContext.tsx`
+- Testing evidence: 401s log out the user without page reload loops.
 - Date resolved: 2026-01-30
 
 ### Issue HF-020
