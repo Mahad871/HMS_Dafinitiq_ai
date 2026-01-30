@@ -47,6 +47,9 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center space-x-2 md:space-x-4">
+            <div className="px-2 py-2 md:hidden">
+              <NotificationBell />
+            </div>
             <button
               className="md:hidden p-2 text-gray-700 hover:text-primary-600"
               onClick={() => setMobileOpen((prev) => !prev)}
@@ -148,6 +151,7 @@ const Navbar = () => {
             </div>
           </div>
         </div>
+
         {mobileOpen && (
           <div className="md:hidden border-t py-3 space-y-2">
             {user ? (
@@ -212,10 +216,6 @@ const Navbar = () => {
                   </Link>
                 )}
 
-                <div className="px-2 py-2">
-                  <NotificationBell />
-                </div>
-
                 <div className="px-2 py-2 text-sm text-gray-600">
                   Hello, {user.name}
                 </div>
@@ -236,7 +236,7 @@ const Navbar = () => {
                 <Link
                   to="/login"
                   onClick={closeMobile}
-                  className="block px-2 py-2 text-gray-700 hover:text-primary-600"
+                  className="block px-2 py-2 text-gray-700 hover:text-primary-600 text-center"
                 >
                   Login
                 </Link>

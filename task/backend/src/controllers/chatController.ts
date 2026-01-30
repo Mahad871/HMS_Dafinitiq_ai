@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import Chat from '../models/Chat';
+import Appointment from '../models/Appointment';
 import { AuthRequest } from '../types';
 
 export const getChats = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -15,7 +16,7 @@ export const getChats = async (req: AuthRequest, res: Response): Promise<void> =
 
     res.json({ chats });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -44,7 +45,7 @@ export const getChatById = async (req: AuthRequest, res: Response): Promise<void
 
     res.json({ chat });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -57,6 +58,15 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
 
     if (!chat) {
       res.status(404).json({ message: 'Chat not found' });
+      return;
+    }
+
+    const isParticipant =
+      chat.patient.toString() === req.user?._id ||
+      chat.doctor.toString() === req.user?._id;
+
+    if (!isParticipant) {
+      res.status(403).json({ message: 'Access denied' });
       return;
     }
 
@@ -94,7 +104,7 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
 
     res.json({ message: 'Message sent', chat });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -106,6 +116,15 @@ export const markMessagesAsRead = async (req: AuthRequest, res: Response): Promi
 
     if (!chat) {
       res.status(404).json({ message: 'Chat not found' });
+      return;
+    }
+
+    const isParticipant =
+      chat.patient.toString() === req.user?._id ||
+      chat.doctor.toString() === req.user?._id;
+
+    if (!isParticipant) {
+      res.status(403).json({ message: 'Access denied' });
       return;
     }
 
@@ -127,13 +146,38 @@ export const markMessagesAsRead = async (req: AuthRequest, res: Response): Promi
 
     res.json({ message: 'Messages marked as read' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 export const createChat = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { doctorId, appointmentId } = req.body;
+
+    if (!req.user?._id) {
+      res.status(401).json({ message: 'Authentication required' });
+      return;
+    }
+
+    if (!doctorId) {
+      res.status(400).json({ message: 'Doctor ID is required' });
+      return;
+    }
+
+    const appointmentQuery: any = {
+      patient: req.user?._id,
+      doctor: doctorId,
+    };
+
+    if (appointmentId) {
+      appointmentQuery._id = appointmentId;
+    }
+
+    const appointment = await Appointment.findOne(appointmentQuery);
+    if (!appointment) {
+      res.status(403).json({ message: 'No appointment found with this doctor' });
+      return;
+    }
 
     // Check if chat already exists
     let chat = await Chat.findOne({
@@ -150,13 +194,13 @@ export const createChat = async (req: AuthRequest, res: Response): Promise<void>
     chat = await Chat.create({
       patient: req.user?._id,
       doctor: doctorId,
-      appointment: appointmentId,
+      appointment: appointmentId || appointment._id,
       messages: [],
       unreadCount: { patient: 0, doctor: 0 },
     });
 
     res.status(201).json({ message: 'Chat created', chat });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };

@@ -22,8 +22,6 @@ export const createAppointment = async (req: AuthRequest, res: Response): Promis
       return;
     }
 
-    await new Promise(resolve => setTimeout(resolve, 100));
-
     const appointment = await Appointment.create({
       patient: req.user?._id,
       doctor: doctorId,
@@ -61,8 +59,12 @@ export const createAppointment = async (req: AuthRequest, res: Response): Promis
       message: 'Appointment booked successfully',
       appointment: populatedAppointment,
     });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+  } catch (error: any) {
+    if (error?.code === 11000) {
+      res.status(400).json({ message: 'This time slot is already booked' });
+      return;
+    }
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -92,7 +94,7 @@ export const getPatientAppointments = async (req: AuthRequest, res: Response): P
 
     res.json({ appointments: appointmentsWithDoctorDetails });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -123,7 +125,7 @@ export const cancelAppointment = async (req: AuthRequest, res: Response): Promis
       appointment,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -151,6 +153,6 @@ export const getAppointmentById = async (req: AuthRequest, res: Response): Promi
 
     res.json({ appointment });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };

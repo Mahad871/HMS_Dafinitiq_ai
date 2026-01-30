@@ -30,7 +30,7 @@ export const createMedicalRecord = async (req: AuthRequest, res: Response): Prom
 
     res.status(201).json({ message: 'Medical record created successfully', record });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -43,7 +43,7 @@ export const getPatientRecords = async (req: AuthRequest, res: Response): Promis
 
     res.json({ records });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -60,7 +60,7 @@ export const getDoctorRecords = async (req: AuthRequest, res: Response): Promise
 
     res.json({ records });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -82,6 +82,6 @@ export const updateMedicalRecord = async (req: AuthRequest, res: Response): Prom
 
     res.json({ message: 'Record updated successfully', record });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };

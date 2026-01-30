@@ -44,7 +44,7 @@ export const createReview = async (req: AuthRequest, res: Response): Promise<voi
 
     res.status(201).json({ message: 'Review submitted successfully', review });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -58,7 +58,7 @@ export const getDoctorReviews = async (req: AuthRequest, res: Response): Promise
 
     res.json({ reviews });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -79,6 +79,6 @@ export const respondToReview = async (req: AuthRequest, res: Response): Promise<
 
     res.json({ message: 'Response added successfully', review });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };

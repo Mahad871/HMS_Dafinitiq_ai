@@ -12,7 +12,7 @@ export const registerValidation = [
   body('email').isEmail().withMessage('Valid email is required'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
   body('name').notEmpty().withMessage('Name is required'),
-  body('role').isIn(Object.values(UserRole)).withMessage('Invalid role'),
+  body('role').optional().isIn([UserRole.PATIENT, UserRole.DOCTOR]).withMessage('Invalid role'),
 ];
 
 export const register = async (req: Request, res: Response): Promise<void> => {
@@ -24,6 +24,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     }
 
     const { email, password, name, role, phone } = req.body;
+    const safeRole =
+      role === UserRole.DOCTOR || role === UserRole.PATIENT
+        ? role
+        : UserRole.PATIENT;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -35,7 +39,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       email,
       password,
       name,
-      role: role || UserRole.PATIENT,
+      role: safeRole,
       phone,
     });
 
@@ -52,7 +56,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -97,7 +101,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -119,6 +123,6 @@ export const getProfile = async (req: AuthRequest, res: Response): Promise<void>
   try {
     res.json({ user: req.user });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };

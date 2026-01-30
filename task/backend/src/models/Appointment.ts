@@ -49,6 +49,14 @@ const appointmentSchema = new Schema<IAppointmentDocument>(
   }
 );
 
-appointmentSchema.index({ doctor: 1, date: 1, timeSlot: 1 });
+appointmentSchema.index(
+  { doctor: 1, date: 1, timeSlot: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      status: { $in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] },
+    },
+  }
+);
 
 export default mongoose.model<IAppointmentDocument>('Appointment', appointmentSchema);

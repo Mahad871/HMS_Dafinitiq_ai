@@ -18,7 +18,7 @@ export const getHealthAdvice = async (req: AuthRequest, res: Response): Promise<
       disclaimer: 'This is AI-generated advice. Please consult a healthcare professional for proper diagnosis and treatment.',
     });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to get health advice', error });
+    res.status(500).json({ message: 'Failed to get health advice' });
   }
 };
 
@@ -35,7 +35,7 @@ export const getDoctorRecommendation = async (req: AuthRequest, res: Response): 
 
     res.json({ recommendation });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to get recommendation', error });
+    res.status(500).json({ message: 'Failed to get recommendation' });
   }
 };
 
@@ -47,7 +47,7 @@ export const getHealthTips = async (req: AuthRequest, res: Response): Promise<vo
 
     res.json({ tips });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to get health tips', error });
+    res.status(500).json({ message: 'Failed to get health tips' });
   }
 };
 
@@ -64,6 +64,6 @@ export const analyzeMedicalReport = async (req: AuthRequest, res: Response): Pro
 
     res.json({ analysis });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to analyze report', error });
+    res.status(500).json({ message: 'Failed to analyze report' });
   }
 };

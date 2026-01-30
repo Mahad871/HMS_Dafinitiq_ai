@@ -21,7 +21,6 @@ export const s3Service = {
         Key: fileName,
         Body: file.buffer,
         ContentType: file.mimetype,
-        ACL: 'public-read',
       });
 
       await s3Client.send(command);
@@ -99,7 +98,6 @@ export const s3Service = {
         Key: fileName,
         Body: buffer,
         ContentType: 'image/png',
-        ACL: 'public-read',
       });
 
       await s3Client.send(command);

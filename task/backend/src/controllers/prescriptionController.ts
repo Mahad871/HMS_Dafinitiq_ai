@@ -40,7 +40,7 @@ export const createPrescription = async (req: AuthRequest, res: Response): Promi
 
     res.status(201).json({ message: 'Prescription created successfully', prescription });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -59,7 +59,7 @@ export const getPatientPrescriptions = async (req: AuthRequest, res: Response): 
 
     res.json({ prescriptions });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -76,7 +76,7 @@ export const getDoctorPrescriptions = async (req: AuthRequest, res: Response): P
 
     res.json({ prescriptions });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -118,7 +118,7 @@ export const requestRefill = async (req: AuthRequest, res: Response): Promise<vo
 
     res.json({ message: 'Refill requested successfully', prescription });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -140,6 +140,6 @@ export const updatePrescriptionStatus = async (req: AuthRequest, res: Response):
 
     res.json({ message: 'Prescription updated successfully', prescription });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };

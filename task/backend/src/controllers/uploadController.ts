@@ -9,14 +9,20 @@ export const uploadProfilePicture = async (req: AuthRequest, res: Response): Pro
       return;
     }
 
-    const imageUrl = await s3Service.uploadFile(req.file, 'profile-pictures');
+    const userId = req.user?._id;
+    if (!userId) {
+      res.status(401).json({ message: 'Authentication required' });
+      return;
+    }
+
+    const imageUrl = await s3Service.uploadFile(req.file, `profile-pictures/${userId}`);
 
     res.json({
       message: 'Profile picture uploaded successfully',
       imageUrl,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to upload profile picture', error });
+    res.status(500).json({ message: 'Failed to upload profile picture' });
   }
 };
 
@@ -27,14 +33,20 @@ export const uploadMedicalDocument = async (req: AuthRequest, res: Response): Pr
       return;
     }
 
-    const documentUrl = await s3Service.uploadFile(req.file, 'medical-documents');
+    const userId = req.user?._id;
+    if (!userId) {
+      res.status(401).json({ message: 'Authentication required' });
+      return;
+    }
+
+    const documentUrl = await s3Service.uploadFile(req.file, `medical-documents/${userId}`);
 
     res.json({
       message: 'Medical document uploaded successfully',
       documentUrl,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to upload medical document', error });
+    res.status(500).json({ message: 'Failed to upload medical document' });
   }
 };
 
@@ -45,14 +57,20 @@ export const uploadMultipleFiles = async (req: AuthRequest, res: Response): Prom
       return;
     }
 
-    const fileUrls = await s3Service.uploadMultipleFiles(req.files, 'attachments');
+    const userId = req.user?._id;
+    if (!userId) {
+      res.status(401).json({ message: 'Authentication required' });
+      return;
+    }
+
+    const fileUrls = await s3Service.uploadMultipleFiles(req.files, `attachments/${userId}`);
 
     res.json({
       message: 'Files uploaded successfully',
       fileUrls,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to upload files', error });
+    res.status(500).json({ message: 'Failed to upload files' });
   }
 };
 
@@ -65,10 +83,22 @@ export const deleteFile = async (req: AuthRequest, res: Response): Promise<void>
       return;
     }
 
+    const userId = req.user?._id;
+    if (!userId) {
+      res.status(401).json({ message: 'Authentication required' });
+      return;
+    }
+
+    const key = fileUrl.split('.amazonaws.com/')[1];
+    if (!key || !key.includes(`/${userId}/`)) {
+      res.status(403).json({ message: 'Access denied' });
+      return;
+    }
+
     await s3Service.deleteFile(fileUrl);
 
     res.json({ message: 'File deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to delete file', error });
+    res.status(500).json({ message: 'Failed to delete file' });
   }
 };

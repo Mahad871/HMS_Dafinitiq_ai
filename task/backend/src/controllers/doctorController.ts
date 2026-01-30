@@ -36,7 +36,7 @@ export const createDoctorProfile = async (req: any, res: Response): Promise<void
       doctor: doctorProfile,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -60,7 +60,7 @@ export const updateDoctorProfile = async (req: AuthRequest, res: Response): Prom
       doctor: doctorProfile,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -75,7 +75,7 @@ export const getDoctorProfile = async (req: AuthRequest, res: Response): Promise
 
     res.json({ doctor: doctorProfile });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -102,7 +102,7 @@ export const getAllDoctors = async (req: AuthRequest, res: Response) => {
 
     res.json({ doctors: filteredDoctors });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -119,7 +119,7 @@ export const getDoctorById = async (req: AuthRequest, res: Response): Promise<vo
 
     res.json({ doctor });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -139,16 +139,21 @@ export const getDoctorAppointments = async (req: AuthRequest, res: Response): Pr
 
     res.json({ appointments });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 export const updateAppointmentStatus = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
-    const { status, notes } = req.body;
+  const { id } = req.params;
+  const { status, notes } = req.body;
 
-    const appointment = await Appointment.findOne({ _id: id, doctor: req.user?._id });
+  if (!Object.values(AppointmentStatus).includes(status)) {
+    res.status(400).json({ message: 'Invalid appointment status' });
+    return;
+  }
+
+  const appointment = await Appointment.findOne({ _id: id, doctor: req.user?._id });
 
     if (!appointment) {
       res.status(404).json({ message: 'Appointment not found' });
@@ -196,6 +201,6 @@ export const updateAppointmentStatus = async (req: AuthRequest, res: Response): 
       appointment,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };

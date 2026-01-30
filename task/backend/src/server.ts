@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import rateLimit from "express-rate-limit";
@@ -32,27 +33,58 @@ const io = new Server(httpServer, {
 
 const PORT = process.env.PORT || 5000;
 
-const limiter = rateLimit({
+const allowedOrigins = (
+  process.env.CORS_ORIGINS ||
+  process.env.FRONTEND_URL ||
+  "http://localhost:5173"
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.path.startsWith("/auth"),
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 app.use(
   cors({
-    origin: "*",
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
 
-app.use(limiter);
+app.use("/api/auth", authLimiter);
+app.use("/api", apiLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET) {
+  throw new Error("SESSION_SECRET is required in production");
+}
+
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "your-session-secret",
+    secret: process.env.SESSION_SECRET || "dev-session-secret",
     resave: false,
     saveUninitialized: false,
+    store: process.env.MONGODB_URI
+      ? MongoStore.create({ mongoUrl: process.env.MONGODB_URI })
+      : undefined,
     cookie: {
       secure: process.env.NODE_ENV === "production",
       maxAge: 24 * 60 * 60 * 1000,
@@ -103,13 +135,11 @@ app.use(
     next: express.NextFunction,
   ) => {
     console.error(err.stack);
-    res
-      .status(500)
-      .json({
-        message: "Something went wrong!",
-        error: err.message,
-        stack: err.stack,
-      });
+    const isDev = process.env.NODE_ENV !== "production";
+    res.status(500).json({
+      message: "Something went wrong!",
+      ...(isDev ? { error: err.message } : {}),
+    });
   },
 );
 

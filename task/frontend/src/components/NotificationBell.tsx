@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import { Bell, X, Check } from 'lucide-react';
-import api from '../services/api';
-import { format } from 'date-fns';
-import toast from 'react-hot-toast';
+import { useEffect, useRef, useState } from "react";
+import { Bell, X, Check } from "lucide-react";
+import api from "../services/api";
+import { format } from "date-fns";
+import toast from "react-hot-toast";
 
 interface Notification {
   _id: string;
@@ -34,17 +34,17 @@ const NotificationBell = () => {
     };
 
     if (showDropdown) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showDropdown]);
 
   const fetchNotifications = async () => {
     try {
-      const { data } = await api.get('/notifications');
+      const { data } = await api.get("/notifications");
       setNotifications(data.notifications);
       setUnreadCount(data.unreadCount);
     } catch (error) {
@@ -57,17 +57,17 @@ const NotificationBell = () => {
       await api.put(`/notifications/${id}/read`);
       fetchNotifications();
     } catch (error) {
-      toast.error('Failed to mark as read');
+      toast.error("Failed to mark as read");
     }
   };
 
   const markAllAsRead = async () => {
     try {
-      await api.put('/notifications/read-all');
+      await api.put("/notifications/read-all");
       fetchNotifications();
-      toast.success('All notifications marked as read');
+      toast.success("All notifications marked as read");
     } catch (error) {
-      toast.error('Failed to mark all as read');
+      toast.error("Failed to mark all as read");
     }
   };
 
@@ -76,7 +76,7 @@ const NotificationBell = () => {
       await api.delete(`/notifications/${id}`);
       fetchNotifications();
     } catch (error) {
-      toast.error('Failed to delete notification');
+      toast.error("Failed to delete notification");
     }
   };
 
@@ -89,13 +89,13 @@ const NotificationBell = () => {
         <Bell className="h-6 w-6" />
         {unreadCount > 0 && (
           <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {unreadCount > 9 ? '9+' : unreadCount}
+            {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </button>
 
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto">
+        <div className="absolute -right-12 mt-2 w-96 bg-white rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto">
           <div className="p-4 border-b flex justify-between items-center">
             <h3 className="font-semibold text-gray-900">Notifications</h3>
             <div className="flex items-center space-x-2">
@@ -128,15 +128,19 @@ const NotificationBell = () => {
                 <div
                   key={notification._id}
                   className={`p-4 border-b hover:bg-gray-50 ${
-                    !notification.read ? 'bg-blue-50' : ''
+                    !notification.read ? "bg-blue-50" : ""
                   }`}
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h4 className="font-medium text-gray-900">{notification.title}</h4>
-                      <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                      <h4 className="font-medium text-gray-900">
+                        {notification.title}
+                      </h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {notification.message}
+                      </p>
                       <p className="text-xs text-gray-500 mt-2">
-                        {format(new Date(notification.createdAt), 'PPp')}
+                        {format(new Date(notification.createdAt), "PPp")}
                       </p>
                     </div>
                     <div className="flex space-x-2 ml-2">

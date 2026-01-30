@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import mongoose from 'mongoose';
 import Appointment from '../models/Appointment';
 import Doctor from '../models/Doctor';
 import Review from '../models/Review';
@@ -72,20 +73,25 @@ export const getDoctorAnalytics = async (req: AuthRequest, res: Response): Promi
       estimatedRevenue,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 export const getPatientAnalytics = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const patientId = req.user?._id;
+    if (!patientId) {
+      res.status(401).json({ message: 'Authentication required' });
+      return;
+    }
+    const patientObjectId = new mongoose.Types.ObjectId(patientId);
 
     // Total appointments
     const totalAppointments = await Appointment.countDocuments({ patient: patientId });
 
     // Appointments by status
     const appointmentsByStatus = await Appointment.aggregate([
-      { $match: { patient: patientId } },
+      { $match: { patient: patientObjectId } },
       { $group: { _id: '$status', count: { $sum: 1 } } },
     ]);
 
@@ -106,32 +112,42 @@ export const getPatientAnalytics = async (req: AuthRequest, res: Response): Prom
     });
 
     // Total spent
-    const completedAppointments = await Appointment.find({
+    const completedAppointmentsCount = await Appointment.countDocuments({
       patient: patientId,
       status: AppointmentStatus.COMPLETED,
-    }).populate({
-      path: 'doctor',
-      populate: { path: 'userId' },
     });
 
-    let totalSpent = 0;
-    for (const apt of completedAppointments) {
-      const doctorProfile = await Doctor.findOne({ userId: apt.doctor });
-      if (doctorProfile) {
-        totalSpent += doctorProfile.consultationFee;
-      }
-    }
+    const totalSpentAgg = await Appointment.aggregate([
+      { $match: { patient: patientObjectId, status: AppointmentStatus.COMPLETED } },
+      {
+        $lookup: {
+          from: 'doctors',
+          localField: 'doctor',
+          foreignField: 'userId',
+          as: 'doctorProfile',
+        },
+      },
+      { $unwind: { path: '$doctorProfile', preserveNullAndEmptyArrays: true } },
+      {
+        $group: {
+          _id: null,
+          totalSpent: { $sum: { $ifNull: ['$doctorProfile.consultationFee', 0] } },
+        },
+      },
+    ]);
+
+    const totalSpent = totalSpentAgg[0]?.totalSpent || 0;
 
     res.json({
       totalAppointments,
       appointmentsByStatus,
       upcomingAppointments,
       doctorsVisited: doctorsVisited.length,
-      completedAppointments: completedAppointments.length,
+      completedAppointments: completedAppointmentsCount,
       totalSpent,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -194,6 +210,6 @@ export const getAdminAnalytics = async (req: AuthRequest, res: Response): Promis
       monthlyGrowth,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };

@@ -15,7 +15,7 @@ export const getNotifications = async (req: AuthRequest, res: Response): Promise
 
     res.json({ notifications, unreadCount });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -30,7 +30,7 @@ export const markAsRead = async (req: AuthRequest, res: Response): Promise<void>
 
     res.json({ message: 'Notification marked as read' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -43,7 +43,7 @@ export const markAllAsRead = async (req: AuthRequest, res: Response): Promise<vo
 
     res.json({ message: 'All notifications marked as read' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -58,7 +58,7 @@ export const deleteNotification = async (req: AuthRequest, res: Response): Promi
 
     res.json({ message: 'Notification deleted' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
