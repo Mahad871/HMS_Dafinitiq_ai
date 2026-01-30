@@ -22,6 +22,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-009 | Medium | Backend | Config | dotenv not loaded before passport config | Google OAuth always reported as not configured | N/A | Load dotenv in passport config before checking env vars | task/backend/src/config/passport.ts | Fixed | 2026-01-30 |
 | HF-010 | High | Backend | Config | Gemini model `gemini-pro` not available | AI endpoints fail with 404 from Gemini API | N/A | Switch to stable model `gemini-2.5-flash` in service | task/backend/src/services/geminiService.ts | Fixed | 2026-01-30 |
 | HF-011 | Medium | Frontend | Bug | Login button stuck in loading state on failed auth | User cannot retry login without refresh | N/A | Reset loading state in a `finally` block | task/frontend/src/pages/Login.tsx | Fixed | 2026-01-30 |
+| HF-012 | High | Frontend | Bug | Doctor users not visible because no doctor profile created | Patients see empty doctor list | N/A | Collect doctor profile fields on signup and create profile after register | task/frontend/src/pages/Register.tsx | Fixed | 2026-01-30 |
 
 Suggested values:
 
@@ -147,6 +148,21 @@ Suggested values:
 - Fix implemented: Move `setLoading(false)` into a `finally` block so it runs on success or failure.
 - Files changed: `task/frontend/src/pages/Login.tsx`
 - Testing evidence: After a failed login, the button returns to "Login" and is clickable.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-012
+
+- Severity: High
+- Area: Frontend
+- Type: Bug
+- What was wrong: Signing up as a doctor only created a `User`, but the app lists doctors from the `Doctor` collection, so no doctors appeared.
+- Impact: Patients could not see doctor accounts created via signup.
+- Workaround (if any): Manually call `POST /api/doctors/profile` after signup.
+- Fix implemented: Added doctor profile fields to the signup form and created the doctor profile after successful registration.
+- Files changed: `task/frontend/src/pages/Register.tsx`
+- Testing evidence: New doctor signups appear in the doctors list after registration.
 - Date resolved: 2026-01-30
 
 ## Notes and Workarounds (Global)

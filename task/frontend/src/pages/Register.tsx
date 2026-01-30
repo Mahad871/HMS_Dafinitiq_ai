@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { authService } from '../services/authService';
+import { doctorService } from '../services/doctorService';
 import toast from 'react-hot-toast';
 import { Mail, Lock, User, Phone, Chrome } from 'lucide-react';
 import { UserRole } from '../types';
@@ -13,6 +14,11 @@ const Register = () => {
     password: '',
     phone: '',
     role: UserRole.PATIENT,
+    specialization: '',
+    experience: '',
+    qualification: '',
+    consultationFee: '',
+    bio: '',
   });
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -26,7 +32,20 @@ const Register = () => {
       const response = await authService.register(formData);
       login(response.token, response.user);
       toast.success('Registration successful!');
-      navigate(formData.role === UserRole.DOCTOR ? '/doctor/dashboard' : '/');
+
+      if (formData.role === UserRole.DOCTOR) {
+        await doctorService.createProfile({
+          specialization: formData.specialization,
+          experience: Number(formData.experience),
+          qualification: formData.qualification,
+          consultationFee: Number(formData.consultationFee),
+          bio: formData.bio,
+          availability: [],
+        });
+        navigate('/doctor/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Registration failed');
     } finally {
@@ -107,6 +126,67 @@ const Register = () => {
               <option value={UserRole.DOCTOR}>Doctor</option>
             </select>
           </div>
+
+          {formData.role === UserRole.DOCTOR && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Specialization</label>
+                <input
+                  type="text"
+                  value={formData.specialization}
+                  onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Experience (years)</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.experience}
+                  onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Qualification</label>
+                <input
+                  type="text"
+                  value={formData.qualification}
+                  onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Consultation Fee</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.consultationFee}
+                  onChange={(e) => setFormData({ ...formData, consultationFee: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                <textarea
+                  value={formData.bio}
+                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  rows={3}
+                  required
+                />
+              </div>
+            </>
+          )}
 
           <button
             type="submit"
