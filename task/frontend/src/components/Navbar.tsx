@@ -1,8 +1,17 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { LogOut, User, Calendar, Stethoscope, Bot, FileText, Pill, BarChart3 } from 'lucide-react';
-import { UserRole } from '../types';
-import NotificationBell from './NotificationBell';
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import {
+  LogOut,
+  User,
+  Calendar,
+  Stethoscope,
+  Bot,
+  FileText,
+  Pill,
+  BarChart3,
+} from "lucide-react";
+import { UserRole } from "../types";
+import NotificationBell from "./NotificationBell";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -11,7 +20,7 @@ const Navbar = () => {
   const handleLogout = (e: any) => {
     e.preventDefault();
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -21,7 +30,9 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
               <Stethoscope className="h-8 w-8 text-primary-600" />
-              <span className="text-xl font-bold text-gray-900">HealthCare</span>
+              <span className="text-xl font-bold text-gray-900">
+                HealthCare
+              </span>
             </Link>
           </div>
 
@@ -71,18 +82,21 @@ const Navbar = () => {
                     <span className="hidden md:inline">Dashboard</span>
                   </Link>
                 )}
-
-                <Link
-                  to="/analytics"
-                  className="flex items-center space-x-1 text-gray-700 hover:text-primary-600"
-                >
-                  <BarChart3 className="h-5 w-5" />
-                  <span className="hidden md:inline">Analytics</span>
-                </Link>
+                {user.role === UserRole.DOCTOR && (
+                  <Link
+                    to="/analytics"
+                    className="flex items-center space-x-1 text-gray-700 hover:text-primary-600"
+                  >
+                    <BarChart3 className="h-5 w-5" />
+                    <span className="hidden md:inline">Analytics</span>
+                  </Link>
+                )}
 
                 <NotificationBell />
 
-                <span className="text-gray-700 hidden md:inline">Hello, {user.name}</span>
+                <span className="text-gray-700 hidden md:inline">
+                  Hello, {user.name}
+                </span>
 
                 <button
                   onClick={handleLogout}
@@ -94,7 +108,10 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link to="/login" className="text-gray-700 hover:text-primary-600">
+                <Link
+                  to="/login"
+                  className="text-gray-700 hover:text-primary-600"
+                >
                   Login
                 </Link>
                 <Link
