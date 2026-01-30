@@ -164,17 +164,31 @@ export const updateAppointmentStatus = async (req: AuthRequest, res: Response): 
         .populate('patient')
         .populate('doctor');
 
-      const patient = populatedAppointment.patient;
-      const doctor = populatedAppointment.doctor;
+      if (populatedAppointment) {
+        const patient = populatedAppointment.patient;
+        const doctor = populatedAppointment.doctor;
 
-      emailService.sendAppointmentConfirmedEmail(
-        patient.email,
-        {
-          doctorName: doctor.name,
-          date: format(new Date(appointment.date), 'PPP'),
-          timeSlot: appointment.timeSlot,
+        if (
+          patient &&
+          doctor &&
+          typeof patient === 'object' &&
+          typeof doctor === 'object' &&
+          'email' in patient &&
+          'name' in doctor
+        ) {
+          const patientEmail = (patient as { email: string }).email;
+          const doctorName = (doctor as { name: string }).name;
+
+          emailService.sendAppointmentConfirmedEmail(
+            patientEmail,
+            {
+              doctorName,
+              date: format(new Date(appointment.date), 'PPP'),
+              timeSlot: appointment.timeSlot,
+            }
+          );
         }
-      );
+      }
     }
 
     res.json({

@@ -40,6 +40,11 @@ export const createAppointment = async (req: AuthRequest, res: Response): Promis
     const doctor = await User.findById(doctorId);
     const patient = await User.findById(req.user?._id);
 
+    if (!doctor || !patient) {
+      res.status(404).json({ message: 'Doctor or patient not found' });
+      return;
+    }
+
     emailService.sendAppointmentBookedEmail(
       patient.email,
       doctor.email,
