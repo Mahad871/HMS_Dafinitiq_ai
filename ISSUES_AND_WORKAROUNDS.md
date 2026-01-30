@@ -39,6 +39,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-033 | Low | Docs | Formatting | Issues table formatting broken by blank lines | Table renders incorrectly in Markdown | N/A | Remove blank lines within table block | ISSUES_AND_WORKAROUNDS.md | Fixed | 2026-01-30 |
 | HF-034 | Low | Frontend | UI/UX | Notifications dropdown overflows on mobile | Panel goes off-screen and is hard to use | N/A | Make dropdown width responsive and center on small screens | task/frontend/src/components/NotificationBell.tsx | Fixed | 2026-01-30 |
 | HF-035 | Medium | Frontend | Bug | App keeps reloading on repeated 401s | Users experience continuous reloads on auth failures | N/A | Dispatch logout event and avoid hard reload on 401 | task/frontend/src/services/api.ts; task/frontend/src/contexts/AuthContext.tsx | Fixed | 2026-01-30 |
+| HF-036 | Low | Frontend | Bug | Notifications API called while logged out | Unnecessary 401s on login page | N/A | Only poll notifications when user is authenticated | task/frontend/src/components/NotificationBell.tsx | Fixed | 2026-01-30 |
 | HF-020 | Critical | Backend | Security | Role escalation allowed on registration | Users can register as admin | N/A | Restrict registration roles to patient/doctor | task/backend/src/controllers/authController.ts | Fixed | 2026-01-30 |
 | HF-021 | High | Backend | Security | CORS allows any origin with credentials | Cross-origin abuse risk | N/A | Restrict CORS to allowed origins list | task/backend/src/server.ts | Fixed | 2026-01-30 |
 | HF-022 | Medium | Backend | Config | Global rate limiter throttles auth and core APIs | Users get 429s during normal use | N/A | Split auth and general API rate limits | task/backend/src/server.ts | Fixed | 2026-01-30 |
@@ -459,6 +460,21 @@ Suggested values:
 - Fix implemented: Dispatch a logout event on 401 and let the SPA redirect without full reloads.
 - Files changed: `task/frontend/src/services/api.ts`, `task/frontend/src/contexts/AuthContext.tsx`
 - Testing evidence: 401s log out the user without page reload loops.
+- Date resolved: 2026-01-30
+
+---
+
+### Issue HF-036
+
+- Severity: Low
+- Area: Frontend
+- Type: Bug
+- What was wrong: Notification polling ran even when no user was logged in.
+- Impact: Repeated 401s on the login screen.
+- Workaround (if any): None.
+- Fix implemented: Start polling only when a user is authenticated and clear data on logout.
+- Files changed: `task/frontend/src/components/NotificationBell.tsx`
+- Testing evidence: Login page no longer makes `/notifications` calls.
 - Date resolved: 2026-01-30
 
 ### Issue HF-020

@@ -3,6 +3,7 @@ import { Bell, X, Check } from "lucide-react";
 import api from "../services/api";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
+import { useAuth } from "../contexts/AuthContext";
 
 interface Notification {
   _id: string;
@@ -15,16 +16,23 @@ interface Notification {
 }
 
 const NotificationBell = () => {
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (!user) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -44,6 +52,7 @@ const NotificationBell = () => {
 
   const fetchNotifications = async () => {
     try {
+      if (!user) return;
       const { data } = await api.get("/notifications");
       setNotifications(data.notifications);
       setUnreadCount(data.unreadCount);
