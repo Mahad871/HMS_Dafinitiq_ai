@@ -51,6 +51,7 @@ This template follows the assessment requirements from the project PDF.
 | HF-028 | Medium | Backend | Validation | Appointment status update accepts any string | Invalid statuses can be stored | N/A | Validate status against AppointmentStatus enum | task/backend/src/controllers/doctorController.ts | Fixed | 2026-01-30 |
 | HF-029 | Medium | Backend | Bug/Performance | Patient analytics totalSpent uses N+1 queries and may undercount | Incorrect totals and slow analytics | N/A | Aggregate totalSpent with lookup; avoid N+1 | task/backend/src/controllers/analyticsController.ts | Fixed | 2026-01-30 |
 | HF-030 | Low | Backend | Performance | Artificial delay in appointment creation | Unnecessary latency in booking flow | N/A | Remove artificial delay | task/backend/src/controllers/appointmentController.ts | Fixed | 2026-01-30 |
+| HF-037 | Low | Repository | Hygiene | Apple archive metadata committed with source | Unnecessary files in checkouts | N/A | Remove 99 generated AppleDouble metadata files and ignore __MACOSX directories; preserve source and installers | task/__MACOSX/**; .gitignore; ISSUES_AND_WORKAROUNDS.md | Fixed | 2026-10-24 |
 Suggested values:
 
 - **Area**: Backend, Frontend, API, Auth, DB, AI, DevOps
@@ -581,6 +582,18 @@ Suggested values:
 - Date resolved: 2026-01-30
 
 ---
+
+
+### Issue HF-037
+
+- Severity: Low
+- Area/type: Repository hygiene
+- What was wrong: The imported task archive included 99 generated AppleDouble metadata files under `task/__MACOSX/`.
+- Fix implemented: Remove only archive metadata and add an ignore rule; preserve application source, assets, and installers.
+- Files changed: `task/__MACOSX/**`, `.gitignore`, `ISSUES_AND_WORKAROUNDS.md`
+- Verification: Compare Git blob IDs and file modes for every retained file; check deleted paths against Git ignore rules.
+- Status: Fixed
+- Date resolved: 2026-10-24
 
 ## Notes and Workarounds (Global)
 
